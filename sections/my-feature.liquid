@@ -3,6 +3,16 @@
 <div id="MyFeature-{{ section.id }}" class="my-feature page-width">
   <h1 class="my-feature__title">{{ section.settings.title }}</h1>
   <h2 class="my-feature__subTitle">{{ section.settings.subTitle }}</h2>
+
+  {% for block in section.blocks %}
+    {% case block.type %}
+      {% when 'my_feature' %}
+        <div {{ block.shopify_attributes }}>
+          <h1>{{ block.settings.title }}</h1>
+          <h2>{{ block.settings.subTitle }}</h2>
+        </div>
+    {% endcase %}
+  {% endfor %}
 </div>
 
 {% schema %}
