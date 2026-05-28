@@ -1,0 +1,3 @@
+# Theme Check config — helps the Shopify Liquid extension locate the theme root.
+# This file is not uploaded by `shopify theme push`.
+root: .

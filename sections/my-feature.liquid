@@ -1,0 +1,18 @@
+{{ 'section-my-feature.css' | asset_url | stylesheet_tag }}
+
+<div class="my-feature page-width">
+  <h1 class="my-feature__title">{{ section.settings.title }}</h1>
+</div>
+
+{% schema %}
+{
+  "name": "My Feature",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title"
+    }
+  ]
+}
+{% endschema %}
