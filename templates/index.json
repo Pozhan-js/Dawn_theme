@@ -78,10 +78,43 @@
     },
     "my_feature_3ADVir": {
       "type": "my-feature",
+      "blocks": {
+        "accordion_item_N73mJ7": {
+          "type": "accordion_item",
+          "settings": {
+            "heading": "商品1",
+            "content": "<p>这里是折叠内容，可在主题编辑器中修改。</p>",
+            "default_open": true
+          }
+        },
+        "accordion_item_8ziXDR": {
+          "type": "accordion_item",
+          "settings": {
+            "heading": "商品2",
+            "content": "<p>这里是折叠内容，可在主题编辑器中修改。</p>",
+            "default_open": false
+          }
+        },
+        "accordion_item_cXxGcU": {
+          "type": "accordion_item",
+          "settings": {
+            "heading": "商品3",
+            "content": "<p>这里是折叠内容，可在主题编辑器中修改。</p>",
+            "default_open": false
+          }
+        }
+      },
+      "block_order": [
+        "accordion_item_N73mJ7",
+        "accordion_item_8ziXDR",
+        "accordion_item_cXxGcU"
+      ],
       "name": "My Feature",
       "settings": {
         "title": "通告",
-        "subTitle": "优惠商品将"
+        "subTitle": "优惠商品将",
+        "accordion_mode": true,
+        "open_first_item": false
       }
     }
   },
