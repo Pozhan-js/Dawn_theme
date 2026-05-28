@@ -3,15 +3,109 @@
 }
 
 .my-feature__title {
-  margin: 0;
-  color: aqua;
+  margin: 0 0 0.8rem;
+  color: rgba(0, 0, 0, 0.88);
   font-size: 2rem;
+  font-weight: 600;
+  line-height: 1.4;
   text-align: center;
 }
 
 .my-feature__subTitle {
-  margin: 0;
-  color: aqua;
-  font-size: 1.5rem;
+  margin: 0 0 2rem;
+  color: rgba(0, 0, 0, 0.65);
+  font-size: 1.4rem;
+  font-weight: 400;
+  line-height: 1.5;
   text-align: left;
+}
+
+.my-feature__collapse {
+  display: block;
+  background: #ffffff;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.my-feature__collapse-item {
+  border-bottom: 1px solid #d9d9d9;
+}
+
+.my-feature__collapse-item:last-child {
+  border-bottom: none;
+}
+
+.my-feature__collapse-item details {
+  margin: 0;
+}
+
+.my-feature__collapse-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.2rem;
+  padding: 1.2rem 1.6rem;
+  cursor: pointer;
+  list-style: none;
+  color: rgba(0, 0, 0, 0.88);
+  font-size: 1.4rem;
+  font-weight: 500;
+  line-height: 1.5;
+  background: #ffffff;
+  transition: background-color 0.2s ease;
+}
+
+.my-feature__collapse-header::-webkit-details-marker {
+  display: none;
+}
+
+.my-feature__collapse-header:hover {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.my-feature__collapse-title {
+  flex: 1;
+  min-width: 0;
+  word-break: break-word;
+}
+
+.my-feature__collapse-arrow {
+  display: inline-flex;
+  flex-shrink: 0;
+  width: 1.2rem;
+  height: 1.2rem;
+  color: rgba(0, 0, 0, 0.45);
+  transition: transform 0.24s ease;
+}
+
+.my-feature__collapse-arrow svg {
+  width: 100%;
+  height: 100%;
+}
+
+.my-feature__collapse-item details[open] > .my-feature__collapse-header .my-feature__collapse-arrow {
+  transform: rotate(90deg);
+}
+
+.my-feature__collapse-content {
+  padding: 1.2rem 1.6rem 1.6rem;
+  color: rgba(0, 0, 0, 0.88);
+  font-size: 1.4rem;
+  line-height: 1.6;
+  background: #fafafa;
+  border-top: 1px solid #d9d9d9;
+}
+
+.my-feature__collapse-content > :first-child {
+  margin-top: 0;
+}
+
+.my-feature__collapse-content > :last-child {
+  margin-bottom: 0;
+}
+
+.my-feature__collapse-content img {
+  max-width: 100%;
+  height: auto;
 }

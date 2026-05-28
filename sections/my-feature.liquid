@@ -1,58 +1,145 @@
 {{ 'section-my-feature.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'my-feature-accordion.js' | asset_url }}" defer="defer"></script>
 
 <div id="MyFeature-{{ section.id }}" class="my-feature page-width">
-  <h1 class="my-feature__title">{{ section.settings.title }}</h1>
-  <h2 class="my-feature__subTitle">{{ section.settings.subTitle }}</h2>
+  {%- if section.settings.title != blank -%}
+    <h1 class="my-feature__title">{{ section.settings.title }}</h1>
+  {%- endif -%}
+  {%- if section.settings.subTitle != blank -%}
+    <h2 class="my-feature__subTitle">{{ section.settings.subTitle }}</h2>
+  {%- endif -%}
 
-  {% for block in section.blocks %}
-    {% case block.type %}
-      {% when 'my_feature' %}
-        <div {{ block.shopify_attributes }}>
-          <h1>{{ block.settings.title }}</h1>
-          <h2>{{ block.settings.subTitle }}</h2>
-        </div>
-    {% endcase %}
-  {% endfor %}
+  {%- if section.blocks.size > 0 -%}
+    <my-feature-accordion
+      class="my-feature__collapse"
+      {% if section.settings.accordion_mode %}
+        data-accordion-mode
+      {% endif %}
+    >
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          {%- when 'accordion_item' -%}
+            <div class="my-feature__collapse-item" {{ block.shopify_attributes }}>
+              <details
+                id="MyFeatureAccordion-{{ block.id }}-{{ section.id }}"
+                {% if block.settings.default_open %}
+                  open
+                {% elsif section.settings.open_first_item and forloop.first %}
+                  open
+                {% endif %}
+              >
+                <summary
+                  class="my-feature__collapse-header"
+                  id="MyFeatureAccordionSummary-{{ block.id }}-{{ section.id }}"
+                >
+                  <span class="my-feature__collapse-title">{{ block.settings.heading | escape }}</span>
+                  <span class="my-feature__collapse-arrow" aria-hidden="true">
+                    <svg viewBox="0 0 12 12" focusable="false">
+                      <path d="M4.5 2.5 8 6l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </span>
+                </summary>
+                <div
+                  class="my-feature__collapse-content rte"
+                  id="MyFeatureAccordionContent-{{ block.id }}-{{ section.id }}"
+                  role="region"
+                  aria-labelledby="MyFeatureAccordionSummary-{{ block.id }}-{{ section.id }}"
+                >
+                  {{ block.settings.content }}
+                </div>
+              </details>
+            </div>
+        {%- endcase -%}
+      {%- endfor -%}
+    </my-feature-accordion>
+  {%- endif -%}
 </div>
 
 {% schema %}
-  {
-    "name": "底部区域展示横条",
-    "settings": [
-      {
-        "type": "text",
-        "id": "title",
-        "label": "Title"
-      },
-      {
-        "type": "text",
-        "id": "subTitle",
-        "label": "副标题"
-      }
-    ],
-    "presets": [
-      {
-        "name": "My Feature"
-      }
-    ],
-    "limit": 2,
-    "blocks": [
-      {
-        "type": "my_feature",
-        "name": "底部区域展示横条",
-        "settings": [
-          {
-            "type": "text",
-            "id": "title",
-            "label": "Title"
-          },
-          {
-            "type": "text",
-            "id": "subTitle",
-            "label": "副标题"
+{
+  "name": "底部区域展示横条",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title"
+    },
+    {
+      "type": "text",
+      "id": "subTitle",
+      "label": "副标题"
+    },
+    {
+      "type": "header",
+      "content": "折叠面板"
+    },
+    {
+      "type": "checkbox",
+      "id": "accordion_mode",
+      "label": "手风琴模式（同时只展开一项）",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "open_first_item",
+      "label": "默认展开第一项",
+      "default": false
+    }
+  ],
+  "blocks": [
+    {
+      "type": "accordion_item",
+      "name": "折叠项",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "标题",
+          "default": "折叠面板"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "内容",
+          "default": "<p>这里是折叠内容，可在主题编辑器中修改。</p>"
+        },
+        {
+          "type": "checkbox",
+          "id": "default_open",
+          "label": "默认展开",
+          "default": false
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "My Feature",
+      "blocks": [
+        {
+          "type": "accordion_item",
+          "settings": {
+            "heading": "面板一",
+            "content": "<p>这是第一个折叠面板的内容。</p>"
           }
-        ]
-      }
-    ]
-  }
+        },
+        {
+          "type": "accordion_item",
+          "settings": {
+            "heading": "面板二",
+            "content": "<p>这是第二个折叠面板的内容。</p>"
+          }
+        },
+        {
+          "type": "accordion_item",
+          "settings": {
+            "heading": "面板三",
+            "content": "<p>这是第三个折叠面板的内容。</p>"
+          }
+        }
+      ]
+    }
+  ],
+  "limit": 2
+}
 {% endschema %}
