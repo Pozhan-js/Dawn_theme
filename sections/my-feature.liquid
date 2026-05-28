@@ -1,7 +1,8 @@
 {{ 'section-my-feature.css' | asset_url | stylesheet_tag }}
 
-<div class="my-feature page-width">
+<div id="MyFeature-{{ section.id }}" class="my-feature page-width">
   <h1 class="my-feature__title">{{ section.settings.title }}</h1>
+  <h2 class="my-feature__subTitle">{{ section.settings.title }}</h2>
 </div>
 
 {% schema %}
@@ -12,6 +13,11 @@
       "type": "text",
       "id": "title",
       "label": "Title"
+    },
+    {
+      "type": "text",
+      "id": "subTitle",
+      "label": "副标题"
     }
   ]
 }

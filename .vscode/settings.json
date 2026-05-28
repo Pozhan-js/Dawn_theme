@@ -1,3 +1,5 @@
 {
-  "shopifyLiquid.themeCheck.root": "${workspaceFolder}"
+  "themeCheck.checkOnChange": true,
+  "themeCheck.checkOnSave": true,
+  "themeCheck.preloadOnBoot": true
 }
