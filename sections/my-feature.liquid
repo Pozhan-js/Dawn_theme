@@ -7,7 +7,7 @@
 
 {% schema %}
   {
-    "name": "My Feature",
+    "name": "底部区域展示横条",
     "settings": [
       {
         "type": "text",
@@ -23,6 +23,25 @@
     "presets": [
       {
         "name": "My Feature"
+      }
+    ],
+    "limit": 2,
+    "blocks": [
+      {
+        "type": "my_feature",
+        "name": "底部区域展示横条",
+        "settings": [
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title"
+          },
+          {
+            "type": "text",
+            "id": "subTitle",
+            "label": "副标题"
+          }
+        ]
       }
     ]
   }
