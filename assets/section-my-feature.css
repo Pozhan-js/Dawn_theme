@@ -2,9 +2,28 @@
   padding: 2rem 0;
 }
 
+.my-feature__intro {
+  margin-bottom: 2rem;
+}
+
+.my-feature__accent {
+  display: block;
+  width: 4.8rem;
+  height: 0.4rem;
+  margin: 0 auto 1.2rem;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #1677ff, #69b1ff);
+  transform-origin: left center;
+}
+
+.my-feature[data-motion-section]:not(.is-motion-ready) [data-motion='title'],
+.my-feature[data-motion-section]:not(.is-motion-ready) [data-motion='subtitle'],
+.my-feature[data-motion-section]:not(.is-motion-ready) [data-motion='accent'] {
+  opacity: 0;
+}
+
 .my-feature__title {
   margin: 0 0 0.8rem;
-  /* color: rgba(0, 0, 0, 0.88); */
   color: brown;
   font-size: 2rem;
   font-weight: 600;
@@ -14,7 +33,6 @@
 
 .my-feature__subTitle {
   margin: 0 0 2rem;
-  /* color: rgba(0, 0, 0, 0.65); */
   color: cyan;
   font-size: 1.4rem;
   font-weight: 400;
@@ -31,7 +49,7 @@
 }
 
 .my-feature__collapse-item {
-  border-bottom: 1px solid #d9d9d9;
+  border-bottom: 1px solid #f0f0f0;
 }
 
 .my-feature__collapse-item:last-child {
@@ -55,15 +73,10 @@
   font-weight: 500;
   line-height: 1.5;
   background: #ffffff;
-  transition: background-color 0.2s ease;
 }
 
 .my-feature__collapse-header::-webkit-details-marker {
   display: none;
-}
-
-.my-feature__collapse-header:hover {
-  background: rgba(0, 0, 0, 0.02);
 }
 
 .my-feature__collapse-title {
@@ -78,7 +91,9 @@
   width: 1.2rem;
   height: 1.2rem;
   color: rgba(0, 0, 0, 0.45);
-  transition: transform 0.24s ease;
+  rotate: 0deg;
+  transform-origin: center;
+  transition: rotate 0.26s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .my-feature__collapse-arrow svg {
@@ -86,17 +101,42 @@
   height: 100%;
 }
 
-.my-feature__collapse-item details[open] > .my-feature__collapse-header .my-feature__collapse-arrow {
-  transform: rotate(90deg);
+/* antd Collapse：仅展开项为 active 蓝色样式 */
+.my-feature__collapse-item[data-expanded='true'] .my-feature__collapse-header {
+  background: #e6f4ff;
+  box-shadow: inset 3px 0 0 #1677ff;
+}
+
+.my-feature__collapse-item[data-expanded='true'] .my-feature__collapse-title {
+  color: #1677ff;
+}
+
+.my-feature__collapse-item[data-expanded='true'] .my-feature__collapse-arrow {
+  color: #1677ff;
+  rotate: 90deg;
+}
+
+/* 未展开项：仅 hover 时轻微灰底，移出即恢复 */
+@media (hover: hover) and (pointer: fine) {
+  .my-feature__collapse-item:not([data-expanded='true']):hover .my-feature__collapse-header {
+    background: rgba(0, 0, 0, 0.02);
+  }
+}
+
+.my-feature__collapse-panel {
+  overflow: hidden;
+  height: 0;
+  border-top: 0 solid #f0f0f0;
 }
 
 .my-feature__collapse-content {
+  min-height: 0;
+  overflow: hidden;
   padding: 1.2rem 1.6rem 1.6rem;
   color: rgba(0, 0, 0, 0.88);
   font-size: 1.4rem;
   line-height: 1.6;
   background: #fafafa;
-  border-top: 1px solid #d9d9d9;
 }
 
 .my-feature__collapse-content > :first-child {
@@ -110,4 +150,12 @@
 .my-feature__collapse-content img {
   max-width: 100%;
   height: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .my-feature[data-motion-section]:not(.is-motion-ready) [data-motion='title'],
+  .my-feature[data-motion-section]:not(.is-motion-ready) [data-motion='subtitle'],
+  .my-feature[data-motion-section]:not(.is-motion-ready) [data-motion='accent'] {
+    opacity: 1;
+  }
 }

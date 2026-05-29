@@ -1,31 +1,41 @@
 {{ 'section-my-feature.css' | asset_url | stylesheet_tag }}
 <script src="{{ 'my-feature-accordion.js' | asset_url }}" defer="defer"></script>
+<script src="{{ 'theme-animation.js' | asset_url }}" defer="defer"></script>
 
-<div id="MyFeature-{{ section.id }}" class="my-feature page-width">
-  {%- if section.settings.title != blank -%}
-    <h1 class="my-feature__title">{{ section.settings.title }}</h1>
-  {%- endif -%}
-  {%- if section.settings.subTitle != blank -%}
-    <h2 class="my-feature__subTitle">{{ section.settings.subTitle }}</h2>
-  {%- endif -%}
+<div
+  id="MyFeature-{{ section.id }}"
+  class="my-feature page-width"
+  data-motion-section="my-feature">
+  <div class="my-page-current">{{ request.page_type }}</div>
+
+  <div class="my-feature__intro">
+    <span class="my-feature__accent" data-motion="accent" aria-hidden="true"></span>
+    {%- if section.settings.title != blank -%}
+      <h1 class="my-feature__title" data-motion="title">{{ section.settings.title }}</h1>
+    {%- endif -%}
+    {%- if section.settings.subTitle != blank -%}
+      <h2 class="my-feature__subTitle" data-motion="subtitle">{{ section.settings.subTitle }}</h2>
+    {%- endif -%}
+  </div>
 
   {%- if section.blocks.size > 0 -%}
     <my-feature-accordion
       class="my-feature__collapse"
       {% if section.settings.accordion_mode %}
       data-accordion-mode
+      {% endif %}
+      {% if section.settings.open_first_item %}
+      data-open-first-item
       {% endif %}>
       {%- for block in section.blocks -%}
         {%- case block.type -%}
           {%- when 'accordion_item' -%}
-            <div class="my-feature__collapse-item" {{ block.shopify_attributes }}>
-              <details
-                id="MyFeatureAccordion-{{ block.id }}-{{ section.id }}"
-                {% if block.settings.default_open %}
-                open
-                {% elsif section.settings.open_first_item and forloop.first %}
-                open
-                {% endif %}>
+            <div
+              class="my-feature__collapse-item"
+              data-motion="item"
+              data-expanded="{% if block.settings.default_open or section.settings.open_first_item and forloop.first %}true{% else %}false{% endif %}"
+              {{ block.shopify_attributes }}>
+              <details id="MyFeatureAccordion-{{ block.id }}-{{ section.id }}">
                 <summary class="my-feature__collapse-header" id="MyFeatureAccordionSummary-{{ block.id }}-{{ section.id }}">
                   <span class="my-feature__collapse-title">{{ block.settings.heading | escape }}</span>
                   <span class="my-feature__collapse-arrow" aria-hidden="true">
@@ -40,12 +50,14 @@
                     </svg>
                   </span>
                 </summary>
-                <div
-                  class="my-feature__collapse-content rte"
-                  id="MyFeatureAccordionContent-{{ block.id }}-{{ section.id }}"
-                  role="region"
-                  aria-labelledby="MyFeatureAccordionSummary-{{ block.id }}-{{ section.id }}">
-                  {{ block.settings.content }}
+                <div class="my-feature__collapse-panel" data-motion-panel>
+                  <div
+                    class="my-feature__collapse-content rte"
+                    id="MyFeatureAccordionContent-{{ block.id }}-{{ section.id }}"
+                    role="region"
+                    aria-labelledby="MyFeatureAccordionSummary-{{ block.id }}-{{ section.id }}">
+                    {{ block.settings.content }}
+                  </div>
                 </div>
               </details>
             </div>
@@ -54,6 +66,14 @@
     </my-feature-accordion>
   {%- endif -%}
 </div>
+
+
+{% style %}
+  .my-page-current {
+    color: red;
+    font-size: 2rem;
+  }
+{% endstyle %}
 
 {% schema %}
   {
@@ -83,7 +103,7 @@
         "type": "checkbox",
         "id": "open_first_item",
         "label": "默认展开第一项",
-        "default": false
+        "default": true
       }
     ],
     "blocks": [
