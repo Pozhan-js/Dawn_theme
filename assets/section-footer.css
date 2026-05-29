@@ -1,3 +1,20 @@
+/* Bottom bar gradient only — no layout/shape overrides */
+.footer__content-bottom.footer--forest-hero {
+  background: linear-gradient(135deg, #051109 0%, #0e2418 45%, #163024 100%);
+}
+
+.footer__content-bottom.footer--forest-hero .copyright__content,
+.footer__content-bottom.footer--forest-hero .copyright__content a,
+.footer__content-bottom.footer--forest-hero .footer__localization h2 {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+@media screen and (min-width: 750px) {
+  .footer__content-bottom.footer--forest-hero .copyright__content a:hover {
+    color: rgba(255, 255, 255, 0.95);
+  }
+}
+
 .footer {
   border-top: 0.1rem solid rgba(var(--color-foreground), 0.08);
 }
