@@ -16,47 +16,6 @@
         "padding_bottom": 28
       }
     },
-    "my_feature_UaFEPm": {
-      "type": "my-feature",
-      "blocks": {
-        "accordion_item_wpXybm": {
-          "type": "accordion_item",
-          "settings": {
-            "heading": "面板一",
-            "content": "<p>这是第一个折叠面板的内容。</p>",
-            "default_open": false
-          }
-        },
-        "accordion_item_xGKF7G": {
-          "type": "accordion_item",
-          "settings": {
-            "heading": "面板二",
-            "content": "<p>这是第二个折叠面板的内容。</p>",
-            "default_open": false
-          }
-        },
-        "accordion_item_En76yW": {
-          "type": "accordion_item",
-          "settings": {
-            "heading": "面板三",
-            "content": "<p>这是第三个折叠面板的内容。</p>",
-            "default_open": false
-          }
-        }
-      },
-      "block_order": [
-        "accordion_item_wpXybm",
-        "accordion_item_xGKF7G",
-        "accordion_item_En76yW"
-      ],
-      "name": "My Feature",
-      "settings": {
-        "title": "测试页面",
-        "subTitle": "这个页面用来测试使用",
-        "accordion_mode": true,
-        "open_first_item": true
-      }
-    },
     "featured_blog_GYMBbA": {
       "type": "featured-blog",
       "name": "t:sections.featured-blog.presets.name",
@@ -78,7 +37,6 @@
   },
   "order": [
     "main",
-    "my_feature_UaFEPm",
     "featured_blog_GYMBbA"
   ]
 }
