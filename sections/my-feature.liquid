@@ -9,7 +9,10 @@
   <div class="my-page-current">{{ request.page_type }}</div>
 
   <div class="my-feature__intro">
-    <span class="my-feature__accent" data-motion="accent" aria-hidden="true"></span>
+    <span
+      class="my-feature__accent"
+      data-motion="accent"
+      aria-hidden="true"></span>
     {%- if section.settings.title != blank -%}
       <h1 class="my-feature__title" data-motion="title">{{ section.settings.title }}</h1>
     {%- endif -%}
@@ -65,6 +68,83 @@
       {%- endfor -%}
     </my-feature-accordion>
   {%- endif -%}
+
+  {%- liquid
+    assign feature_blog = blogs.news
+    assign post_limit = section.settings.post_limit | default: 6
+  -%}
+
+  {%- if feature_blog != blank -%}
+    <div class="my-feature__blog blog-page">
+      <header class="blog-header">
+        <h2 class="my-feature__blog-title">{{ feature_blog.title | escape }}</h2>
+        {%- if feature_blog.description != blank -%}
+          <p class="my-feature__blog-description">{{ feature_blog.description }}</p>
+        {%- endif -%}
+      </header>
+
+      <div class="articles-grid">
+        {%- if feature_blog.articles_count == 0 -%}
+          <p class="blog-page__empty">
+            博客「{{ feature_blog.title | escape }}」（{{ feature_blog.handle }}）当前在店面可读文章数为 0。
+            <br>
+            若后台显示「可见」仍为空，常见原因：<strong>发布时间设为未来时刻（定时发布）</strong>，需改为当前或过去时间并保存。
+            <br>
+            也可直接打开
+            <a href="{{ feature_blog.url }}">{{ feature_blog.url }}</a>
+            查看该博客列表页是否有文章。
+          </p>
+        {%- else -%}
+          {%- for article in feature_blog.articles limit: post_limit -%}
+            <article class="article-card">
+              <!-- 文章特色图片 -->
+              {% if article.image %}
+                <div class="article-image">
+                  <a href="{{ article.url }}">
+                    <img
+                      src="{{ article.image | image_url: width: 400, height: 250 }}"
+                      alt="{{ article.image.alt | escape }}"
+                      width="400"
+                      height="250"
+                      loading="lazy">
+                  </a>
+                </div>
+              {% endif %}
+
+              <!-- 文章内容 -->
+              <div class="article-content">
+                <h2>
+                  <a href="{{ article.url }}">{{ article.title }}</a>
+                </h2>
+
+                <!-- 文章元信息 -->
+                <div class="article-meta">
+                  <time>{{ article.published_at | date: "%Y年%m月%d日" }}</time>
+                  {% if article.author != blank %}
+                    <span class="author">作者: {{ article.author }}</span>
+                  {% endif %}
+                  {% if article.tags.size > 0 %}
+                    <div class="tags">
+                      {% for tag in article.tags %}
+                        <span class="tag">{{ tag }}</span>
+                      {% endfor %}
+                    </div>
+                  {% endif %}
+                </div>
+
+                <!-- 文章摘要 -->
+                <div class="article-excerpt">
+                  {{ article.excerpt | default: article.content | strip_html | truncate: 150 }}
+                </div>
+
+                <a href="{{ article.url }}" class="read-more">阅读更多</a>
+              </div>
+            </article>
+          {%- endfor -%}
+        {%- endif -%}
+      </div>
+    </div>
+  {%- endif -%}
 </div>
 
 
@@ -104,6 +184,19 @@
         "id": "open_first_item",
         "label": "默认展开第一项",
         "default": true
+      },
+      {
+        "type": "header",
+        "content": "博客文章列表（固定 news 博客）"
+      },
+      {
+        "type": "range",
+        "id": "post_limit",
+        "min": 1,
+        "max": 12,
+        "step": 1,
+        "default": 6,
+        "label": "显示文章数量"
       }
     ],
     "blocks": [
