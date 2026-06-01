@@ -136,5 +136,10 @@
       }
     }
   },
-  "order": ["image_banner", "featured_collection", "my_feature_3ADVir"]
+  "order": [
+    "image_banner",
+    "featured_collection",
+    "my_feature_3ADVir",
+    "featured_blog_V9BjUb"
+  ]
 }
