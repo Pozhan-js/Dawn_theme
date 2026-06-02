@@ -1,0 +1,9 @@
+{
+  "private": true,
+  "scripts": {
+    "dev:theme": "shopify theme dev",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "build:frontend": "npm --prefix frontend run build",
+    "check:theme": "shopify theme check"
+  }
+}

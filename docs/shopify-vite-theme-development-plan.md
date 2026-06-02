@@ -18,7 +18,7 @@
 
 本方案要解决的问题：
 
-- 提升 CSS、JavaScript、TypeScript、SCSS 的开发效率。
+- 提升 CSS、JavaScript、TypeScript 和 Tailwind 驱动样式的开发效率。
 - 保留 Dawn 的主题结构、主题编辑器能力、SEO 与 Shopify 原生对象渲染能力。
 - 降低直接手写大量 Liquid 的心智负担。
 - 让复杂交互可以用接近 React/Vue 的组件化方式组织。
@@ -37,8 +37,8 @@
 
 ```txt
 Liquid 负责结构、数据、SEO、主题编辑器 schema
-Vite 负责 TS/JS、SCSS/CSS、模块化开发、HMR、生产构建
-复杂交互使用 Web Components / 小型 TS controller / 必要时的 React/Vue 岛屿组件
+Vite 负责 TS/JS、Tailwind/CSS、模块化开发、HMR、生产构建
+复杂交互默认使用小型 TS controller，必要时使用 Vue Island
 ```
 
 也就是：
@@ -46,7 +46,7 @@ Vite 负责 TS/JS、SCSS/CSS、模块化开发、HMR、生产构建
 ```txt
 Shopify Theme = 服务端渲染主体
 Vite = 前端资产构建工具
-React/Vue = 可选的局部交互增强手段
+Vue Island = 可选的局部复杂交互增强手段
 ```
 
 ## 4. 技术选型
@@ -64,7 +64,7 @@ npm i -D vite vite-plugin-shopify
 推荐同时安装：
 
 ```bash
-npm i -D typescript sass concurrently
+npm i -D typescript tailwindcss @tailwindcss/vite
 ```
 
 `vite-plugin-shopify` 的关键能力：
@@ -80,9 +80,9 @@ npm i -D typescript sass concurrently
 - [vite-plugin-shopify npm](https://www.npmjs.com/package/vite-plugin-shopify)
 - [Shopify Vite / Volt 文档](https://shopify-vite.barrelny.com/)
 
-### 4.2 推荐不用 React/Vue 全面接管主题
+### 4.2 推荐不用 Vue 全面接管主题
 
-React/Vue 适合用于局部高交互模块，例如：
+Vue 适合用于局部高交互模块，例如：
 
 - 产品定制器
 - 尺寸推荐器
@@ -116,128 +116,104 @@ config/
 locales/
 ```
 
-新增 Vite 前端源码层：
+新增 Vite 前端源码层。当前 POC 使用 Vue 脚手架，因此 Vite 配置位于 `frontend/` 内：
 
 ```txt
 frontend/
   entrypoints/
-    theme.ts
-    theme.scss
-    product.ts
-    product.scss
-    collection.ts
-    collection.scss
-  components/
-    product-gallery.ts
-    variant-picker.ts
-    cart-drawer.ts
-  styles/
-    tokens.scss
-    base.scss
-    components.scss
-  utils/
-    dom.ts
-    events.ts
-vite.config.mjs
-package.json
+    vue-nest-poc.ts
+  src/
+    App.vue
+    main.ts
+    assets/
+      main.css
+  vite.config.ts
+  package.json
 ```
 
 约定：
 
 - `frontend/entrypoints/` 只放会被 Liquid 直接加载的入口文件。
-- `frontend/components/` 放可复用交互模块。
-- `frontend/styles/` 放 SCSS 设计变量、基础样式、组件样式。
+- `frontend/src/` 放 Vue Island 的源码。
+- `frontend/src/assets/main.css` 作为 Tailwind v4 入口，并保留少量 Shopify 外壳样式。
 - `assets/` 仍然保留 Dawn 原有资源和 Vite 构建产物。
 - 不新增 `src/pages`、`src/router`、`app/` 这类应用型目录，除非明确转向 Headless 或 App 架构。
 
 ## 6. Vite 配置建议
 
-新增 `vite.config.mjs`：
+当前 POC 的配置位于 `frontend/vite.config.ts`：
 
 ```js
+import { defineConfig } from 'vite'
 import shopify from 'vite-plugin-shopify'
+import tailwindcss from '@tailwindcss/vite'
+import vue from '@vitejs/plugin-vue'
 
-export default {
+export default defineConfig({
   plugins: [
     shopify({
-      themeRoot: './',
-      sourceCodeDir: 'frontend',
-      entrypointsDir: 'frontend/entrypoints',
+      themeRoot: '../',
+      sourceCodeDir: '.',
+      entrypointsDir: 'entrypoints',
       snippetFile: 'vite-tag.liquid',
-      themeHotReload: true
-    })
+    }),
+    tailwindcss(),
+    vue(),
   ]
-}
+})
 ```
 
 说明：
 
-- `themeRoot: './'`：当前仓库根目录就是 Shopify 主题根目录。
-- `sourceCodeDir: 'frontend'`：前端源码集中放在 `frontend/`。
-- `entrypointsDir: 'frontend/entrypoints'`：入口文件统一放在 `frontend/entrypoints/`。
+- `themeRoot: '../'`：Vite 从 `frontend/` 内运行，主题根目录在上一级。
+- `sourceCodeDir: '.'`：前端源码根就是当前 `frontend/`。
+- `entrypointsDir: 'entrypoints'`：入口文件统一放在 `frontend/entrypoints/`。
 - `snippetFile: 'vite-tag.liquid'`：插件生成 `snippets/vite-tag.liquid`。
-- `themeHotReload: true`：保留主题开发热更新能力。
+- `tailwindcss()`：使用 Tailwind CSS v4 的 Vite 插件。
 
 ## 7. Liquid 中的资源加载方式
 
-在 `layout/theme.liquid` 的 `<head>` 中加载全局资源：
+在特定 section 中加载模块级资源，例如当前 Vue POC section：
 
 ```liquid
-{% liquid
-  render 'vite-tag' with 'theme.scss'
-  render 'vite-tag' with 'theme.ts'
-%}
-```
-
-在特定 section 中加载页面级资源，例如商品页主区块：
-
-```liquid
-{% liquid
-  render 'vite-tag' with 'product.scss'
-  render 'vite-tag' with 'product.ts'
-%}
+{% render 'vite-tag', entry: 'vue-nest-poc.ts' %}
 ```
 
 约定：
 
-- 全站都需要的样式和行为放到 `theme.scss`、`theme.ts`。
-- 只有商品页需要的交互放到 `product.ts`。
-- 只有集合页需要的交互放到 `collection.ts`。
+- 全站都需要的行为才放到全局入口。
+- 只有某个 section 需要的交互放到该 section 对应入口。
+- Vue Island 的 Tailwind 样式随入口一起打包。
 - 避免把所有页面逻辑都塞进一个巨大的 `theme.ts`。
 
 ## 8. package.json 脚本建议
 
-新增或补充：
+当前主题根目录已新增轻量 `package.json`，作为主题工作流命令入口；`frontend/` 仍保留自己的脚手架依赖和构建命令，`backend/` 不纳入主题命令。
 
 ```json
 {
   "scripts": {
-    "dev:vite": "vite --host 0.0.0.0",
-    "dev:shopify": "shopify theme dev",
-    "dev": "concurrently -k \"npm:dev:vite\" \"npm:dev:shopify\"",
-    "build": "vite build",
-    "check": "shopify theme check"
+    "dev:theme": "shopify theme dev",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "build:frontend": "npm --prefix frontend run build",
+    "check:theme": "shopify theme check"
   },
-  "devDependencies": {
-    "concurrently": "latest",
-    "sass": "latest",
-    "typescript": "latest",
-    "vite": "latest",
-    "vite-plugin-shopify": "latest"
-  }
+  "devDependencies": {}
 }
 ```
 
 日常开发：
 
 ```bash
-npm run dev
+npm run dev:theme
+npm run dev:frontend
 ```
 
 上线前检查：
 
 ```bash
-npm run build
+npm run build:frontend
+npm run check:theme
 npm run check
 shopify theme push --unpublished
 ```
