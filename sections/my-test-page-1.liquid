@@ -1,16 +1,256 @@
-<div class="my-test-page-1">
-  {{ 1111 }}
-</div>
+<section class="my-test-page-1 color-{{ section.settings.color_scheme }} gradient">
+  <div class="page-width my-test-page-1__inner">
+    {%- if section.settings.heading != blank -%}
+      <h2 class="my-test-page-1__heading inline-richtext {{ section.settings.heading_size }}">
+        {{ section.settings.heading }}
+      </h2>
+    {%- endif -%}
 
-<style></style>
+    {%- if section.settings.text != blank -%}
+      <div class="my-test-page-1__text rte">
+        {{ section.settings.text }}
+      </div>
+    {%- endif -%}
+
+    <div class="my-test-page-1__table-wrapper">
+      <table class="my-test-page-1__table">
+        <caption class="visually-hidden">
+          {{ section.settings.heading | default: 'Size chart' }}
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">{{ section.settings.size_label }}</th>
+            <th scope="col">{{ section.settings.shoulder_label }}</th>
+            <th scope="col">{{ section.settings.chest_label }}</th>
+            <th scope="col">{{ section.settings.length_label }}</th>
+            <th scope="col">{{ section.settings.sleeve_label }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {%- for block in section.blocks -%}
+            <tr {{ block.shopify_attributes }}>
+              <th scope="row">{{ block.settings.size }}</th>
+              <td>{{ block.settings.shoulder }}</td>
+              <td>{{ block.settings.chest }}</td>
+              <td>{{ block.settings.length }}</td>
+              <td>{{ block.settings.sleeve }}</td>
+            </tr>
+          {%- endfor -%}
+        </tbody>
+      </table>
+    </div>
+
+    {%- if section.settings.note != blank -%}
+      <p class="my-test-page-1__note">{{ section.settings.note }}</p>
+    {%- endif -%}
+  </div>
+</section>
+
+<style>
+  .my-test-page-1 {
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+  }
+
+  .my-test-page-1__inner {
+    text-align: center;
+  }
+
+  .my-test-page-1__heading {
+    margin: 0 0 1.6rem;
+  }
+
+  .my-test-page-1__text {
+    max-width: 72rem;
+    margin: 0 auto 2.4rem;
+  }
+
+  .my-test-page-1__table-wrapper {
+    overflow-x: auto;
+    border: 0.1rem solid rgba(var(--color-foreground), 0.12);
+  }
+
+  .my-test-page-1__table {
+    width: 100%;
+    min-width: 64rem;
+    border-collapse: collapse;
+    text-align: center;
+  }
+
+  .my-test-page-1__table th,
+  .my-test-page-1__table td {
+    padding: 1.4rem 1.6rem;
+    border-bottom: 0.1rem solid rgba(var(--color-foreground), 0.12);
+  }
+
+  .my-test-page-1__table thead th {
+    background: rgba(var(--color-foreground), 0.04);
+    font-weight: 600;
+  }
+
+  .my-test-page-1__table tbody tr:last-child th,
+  .my-test-page-1__table tbody tr:last-child td {
+    border-bottom: 0;
+  }
+
+  .my-test-page-1__note {
+    margin: 1.6rem 0 0;
+    color: rgba(var(--color-foreground), 0.75);
+    font-size: 1.3rem;
+  }
+</style>
 
 {% schema %}
   {
-    "name": "My Test Page 1",
-    "settings": [],
+    "name": "Size chart",
+    "settings": [
+      {
+        "type": "inline_richtext",
+        "id": "heading",
+        "label": "Heading",
+        "default": "尺码表"
+      },
+      {
+        "type": "select",
+        "id": "heading_size",
+        "options": [
+          {
+            "value": "h2",
+            "label": "Small"
+          },
+          {
+            "value": "h1",
+            "label": "Medium"
+          },
+          {
+            "value": "h0",
+            "label": "Large"
+          }
+        ],
+        "default": "h1",
+        "label": "Heading size"
+      },
+      {
+        "type": "richtext",
+        "id": "text",
+        "label": "Text",
+        "default": "<p>请根据下方数据选择适合自己的尺码，测量方式不同可能存在 1-3cm 误差。</p>"
+      },
+      {
+        "type": "text",
+        "id": "size_label",
+        "label": "Size column label",
+        "default": "尺码"
+      },
+      {
+        "type": "text",
+        "id": "shoulder_label",
+        "label": "Shoulder column label",
+        "default": "肩宽 (cm)"
+      },
+      {
+        "type": "text",
+        "id": "chest_label",
+        "label": "Chest column label",
+        "default": "胸围 (cm)"
+      },
+      {
+        "type": "text",
+        "id": "length_label",
+        "label": "Length column label",
+        "default": "衣长 (cm)"
+      },
+      {
+        "type": "text",
+        "id": "sleeve_label",
+        "label": "Sleeve column label",
+        "default": "袖长 (cm)"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "label": "Note",
+        "default": "建议优先参考胸围和肩宽选择尺码。"
+      },
+      {
+        "type": "color_scheme",
+        "id": "color_scheme",
+        "label": "Color scheme",
+        "default": "scheme-1"
+      },
+      {
+        "type": "range",
+        "id": "padding_top",
+        "min": 0,
+        "max": 100,
+        "step": 4,
+        "unit": "px",
+        "label": "Top padding",
+        "default": 36
+      },
+      {
+        "type": "range",
+        "id": "padding_bottom",
+        "min": 0,
+        "max": 100,
+        "step": 4,
+        "unit": "px",
+        "label": "Bottom padding",
+        "default": 36
+      }
+    ],
+    "blocks": [
+      {
+        "type": "size_row",
+        "name": "Size row",
+        "settings": [
+          {
+            "type": "text",
+            "id": "size",
+            "label": "Size",
+            "default": "M"
+          },
+          {
+            "type": "text",
+            "id": "shoulder",
+            "label": "Shoulder",
+            "default": "45"
+          },
+          {
+            "type": "text",
+            "id": "chest",
+            "label": "Chest",
+            "default": "104"
+          },
+          {
+            "type": "text",
+            "id": "length",
+            "label": "Length",
+            "default": "68"
+          },
+          {
+            "type": "text",
+            "id": "sleeve",
+            "label": "Sleeve",
+            "default": "61"
+          }
+        ]
+      }
+    ],
     "presets": [
       {
-        "name": "My Test Page 1"
+        "name": "Size chart",
+        "blocks": [
+          {
+            "type": "size_row"
+          },
+          {
+            "type": "size_row"
+          },
+          {
+            "type": "size_row"
+          }
+        ]
       }
     ]
   }

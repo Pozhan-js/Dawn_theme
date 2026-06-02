@@ -1,0 +1,67 @@
+{%- liquid
+  assign size_chart = product.metafields.custom.size_chart.value
+  assign rows = size_chart.rows.value | strip
+  assign note = size_chart.note.value
+  assign heading = block.settings.heading
+  if heading == blank
+    assign heading = size_chart.name.value
+  endif
+  if heading == blank
+    assign heading = 'Size chart'
+  endif
+-%}
+
+{%- if size_chart != blank and rows != blank -%}
+  <div class="product__accordion product__size-chart accordion quick-add-hidden" {{ block.shopify_attributes }}>
+    <details id="Details-{{ block.id }}-{{ section.id }}" {% if block.settings.open_by_default %}open{% endif %}>
+      <summary>
+        <div class="summary__title">
+          {% render 'icon-accordion', icon: 'ruler' %}
+          <h2 class="h4 accordion__title inline-richtext">
+            {{ heading | escape }}
+          </h2>
+        </div>
+        {{- 'icon-caret.svg' | inline_asset_content -}}
+      </summary>
+
+      <div class="accordion__content rte" id="ProductAccordion-{{ block.id }}-{{ section.id }}">
+        <div class="product__size-chart-table-wrapper">
+          <table class="product__size-chart-table">
+            <caption class="visually-hidden">
+              {{ heading | escape }}
+            </caption>
+            <thead>
+              <tr>
+                <th scope="col">{{ block.settings.size_label | escape }}</th>
+                <th scope="col">{{ block.settings.shoulder_label | escape }}</th>
+                <th scope="col">{{ block.settings.chest_label | escape }}</th>
+                <th scope="col">{{ block.settings.length_label | escape }}</th>
+                <th scope="col">{{ block.settings.sleeve_label | escape }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {%- assign row_lines = rows | newline_to_br | split: '<br />' -%}
+              {%- for row in row_lines -%}
+                {%- assign row_text = row | strip -%}
+                {%- if row_text != blank -%}
+                  {%- assign cells = row_text | split: '|' -%}
+                  <tr>
+                    <th scope="row">{{ cells[0] | strip | escape }}</th>
+                    <td>{{ cells[1] | strip | escape }}</td>
+                    <td>{{ cells[2] | strip | escape }}</td>
+                    <td>{{ cells[3] | strip | escape }}</td>
+                    <td>{{ cells[4] | strip | escape }}</td>
+                  </tr>
+                {%- endif -%}
+              {%- endfor -%}
+            </tbody>
+          </table>
+        </div>
+
+        {%- if note != blank -%}
+          <p class="product__size-chart-note">{{ note | escape }}</p>
+        {%- endif -%}
+      </div>
+    </details>
+  </div>
+{%- endif -%}

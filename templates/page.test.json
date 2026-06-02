@@ -9,7 +9,63 @@
     },
     "my_test_page_1": {
       "type": "my-test-page-1",
-      "settings": {}
+      "blocks": {
+        "size_s": {
+          "type": "size_row",
+          "settings": {
+            "size": "S",
+            "shoulder": "42",
+            "chest": "96",
+            "length": "66",
+            "sleeve": "59"
+          }
+        },
+        "size_m": {
+          "type": "size_row",
+          "settings": {
+            "size": "M",
+            "shoulder": "44",
+            "chest": "100",
+            "length": "68",
+            "sleeve": "60"
+          }
+        },
+        "size_l": {
+          "type": "size_row",
+          "settings": {
+            "size": "L",
+            "shoulder": "46",
+            "chest": "104",
+            "length": "70",
+            "sleeve": "61"
+          }
+        },
+        "size_xl": {
+          "type": "size_row",
+          "settings": {
+            "size": "XL",
+            "shoulder": "48",
+            "chest": "108",
+            "length": "72",
+            "sleeve": "62"
+          }
+        }
+      },
+      "block_order": ["size_s", "size_m", "size_l", "size_xl"],
+      "settings": {
+        "heading": "尺码表",
+        "heading_size": "h1",
+        "text": "<p>请根据下方数据选择适合自己的尺码，测量方式不同可能存在 1-3cm 误差。</p>",
+        "size_label": "尺码",
+        "shoulder_label": "肩宽 (cm)",
+        "chest_label": "胸围 (cm)",
+        "length_label": "衣长 (cm)",
+        "sleeve_label": "袖长 (cm)",
+        "note": "建议优先参考胸围和肩宽选择尺码。",
+        "color_scheme": "scheme-1",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
     }
   },
   "order": ["main", "my_test_page_1"]
