@@ -1,0 +1,5 @@
+frontend/
+backend/
+docs/
+node_modules/
+assets/.vite/

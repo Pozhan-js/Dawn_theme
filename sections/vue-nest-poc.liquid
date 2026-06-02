@@ -1,4 +1,4 @@
-{{ 'vue-nest-poc.css' | asset_url | stylesheet_tag }}
+{% render 'vite-tag', entry: 'vue-nest-poc.ts' %}
 
 {%- liquid
   assign size_chart_metaobject = blank
@@ -66,8 +66,6 @@
     </script>
   </div>
 </div>
-
-<script src="{{ 'vue-nest-poc.js' | asset_url }}" defer="defer"></script>
 
 {% schema %}
   {
