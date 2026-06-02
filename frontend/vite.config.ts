@@ -2,6 +2,7 @@ import { fileURLToPath, URL } from 'node:url'
 
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import tailwindcss from '@tailwindcss/vite'
 import vueDevTools from 'vite-plugin-vue-devtools'
 import shopify from 'vite-plugin-shopify'
 
@@ -14,6 +15,7 @@ export default defineConfig({
       entrypointsDir: 'entrypoints',
       snippetFile: 'vite-tag.liquid',
     }),
+    tailwindcss(),
     vue(),
     vueDevTools(),
   ],

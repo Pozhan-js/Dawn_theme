@@ -116,28 +116,41 @@ onMounted(loadItems)
 </script>
 
 <template>
-  <section class="vue-nest-poc" aria-live="polite">
-    <p class="vue-nest-poc__eyebrow">Vue 3 + NestJS POC</p>
-    <h2 class="vue-nest-poc__heading">{{ heading }}</h2>
+  <section class="text-[rgba(var(--color-foreground,18,18,18),0.88)]" aria-live="polite">
+    <p class="mb-1 mt-0 text-[1.2rem] uppercase leading-snug text-[rgba(var(--color-foreground,18,18,18),0.65)]">
+      Vue 3 + NestJS POC
+    </p>
+    <h2 class="mb-5 mt-0 text-[2rem] font-semibold leading-snug">{{ heading }}</h2>
 
-    <div v-if="sourceData" class="vue-nest-poc__source">
-      <p class="vue-nest-poc__source-label">当前页面源对象</p>
-      <dl class="vue-nest-poc__source-list">
-        <div>
-          <dt>标题</dt>
-          <dd>{{ sourceData.page.title }}</dd>
+    <div
+      v-if="sourceData"
+      class="mb-6 grid gap-3 rounded-[0.5rem] border border-[rgba(var(--color-foreground,18,18,18),0.08)] bg-[rgba(var(--color-foreground,18,18,18),0.035)] p-5"
+    >
+      <p class="m-0 text-[1.3rem] font-semibold leading-snug">当前页面源对象</p>
+      <dl class="m-0 grid gap-2">
+        <div class="grid grid-cols-[7rem_minmax(0,1fr)] gap-3">
+          <dt class="m-0 text-[1.3rem] leading-snug text-[rgba(var(--color-foreground,18,18,18),0.62)]">
+            标题
+          </dt>
+          <dd class="m-0 [overflow-wrap:anywhere] text-[1.3rem] leading-snug">{{ sourceData.page.title }}</dd>
         </div>
-        <div>
-          <dt>Handle</dt>
-          <dd>{{ sourceData.page.handle }}</dd>
+        <div class="grid grid-cols-[7rem_minmax(0,1fr)] gap-3">
+          <dt class="m-0 text-[1.3rem] leading-snug text-[rgba(var(--color-foreground,18,18,18),0.62)]">
+            Handle
+          </dt>
+          <dd class="m-0 [overflow-wrap:anywhere] text-[1.3rem] leading-snug">{{ sourceData.page.handle }}</dd>
         </div>
-        <div>
-          <dt>URL</dt>
-          <dd>{{ sourceData.page.url }}</dd>
+        <div class="grid grid-cols-[7rem_minmax(0,1fr)] gap-3">
+          <dt class="m-0 text-[1.3rem] leading-snug text-[rgba(var(--color-foreground,18,18,18),0.62)]">
+            URL
+          </dt>
+          <dd class="m-0 [overflow-wrap:anywhere] text-[1.3rem] leading-snug">{{ sourceData.page.url }}</dd>
         </div>
-        <div>
-          <dt>Metafield</dt>
-          <dd>
+        <div class="grid grid-cols-[7rem_minmax(0,1fr)] gap-3">
+          <dt class="m-0 text-[1.3rem] leading-snug text-[rgba(var(--color-foreground,18,18,18),0.62)]">
+            Metafield
+          </dt>
+          <dd class="m-0 [overflow-wrap:anywhere] text-[1.3rem] leading-snug">
             {{ sourceData.sizeChart.metaobject.namespace }}.{{ sourceData.sizeChart.metaobject.key }}
             <span v-if="sourceData.sizeChart.metaobject.loaded">已读取</span>
             <span v-else>未读取到，使用 section blocks 兜底</span>
@@ -146,58 +159,82 @@ onMounted(loadItems)
       </dl>
     </div>
 
-    <p v-if="isLoading" class="vue-nest-poc__status">正在请求 Nest 接口...</p>
+    <p v-if="isLoading" class="m-0 text-[1.4rem] leading-normal">正在请求 Nest 接口...</p>
 
-    <p v-else-if="errorMessage" class="vue-nest-poc__status vue-nest-poc__status--error">
+    <p v-else-if="errorMessage" class="m-0 text-[1.4rem] leading-normal text-[#cf1322]">
       接口请求失败：{{ errorMessage }}
     </p>
 
     <div v-else-if="data && data.items.length > 0">
-      <ul class="vue-nest-poc__list">
-        <li v-for="item in data.items" :key="item.id" class="vue-nest-poc__item">
-          <h3 class="vue-nest-poc__item-title">{{ item.title }}</h3>
-          <p class="vue-nest-poc__item-description">{{ item.description }}</p>
+      <ul class="mb-6 mt-0 grid list-none gap-4 p-0">
+        <li
+          v-for="item in data.items"
+          :key="item.id"
+          class="rounded-[0.5rem] border border-[rgba(var(--color-foreground,18,18,18),0.1)] bg-[rgba(var(--color-background,255,255,255),0.75)] p-5"
+        >
+          <h3 class="mb-1 mt-0 text-[1.6rem] font-semibold leading-snug">{{ item.title }}</h3>
+          <p class="m-0 text-[1.4rem] leading-normal text-[rgba(var(--color-foreground,18,18,18),0.72)]">
+            {{ item.description }}
+          </p>
         </li>
       </ul>
 
-      <p class="vue-nest-poc__meta">
+      <p class="m-0 text-[1.4rem] leading-normal">
         数据来源：{{ data.source }} · {{ new Date(data.generatedAt).toLocaleString() }}
       </p>
     </div>
 
-    <p v-else class="vue-nest-poc__status">Nest 接口返回了空列表。</p>
+    <p v-else class="m-0 text-[1.4rem] leading-normal">Nest 接口返回了空列表。</p>
 
     <section
       v-if="sizeChartRows.length"
-      class="vue-nest-poc__size-chart"
+      class="mt-8 grid gap-5"
       aria-labelledby="VueNestPocSizeChartHeading"
     >
-      <h3 id="VueNestPocSizeChartHeading" class="vue-nest-poc__size-heading">
+      <h3 id="VueNestPocSizeChartHeading" class="m-0 text-[1.8rem] leading-snug">
         {{ sizeChart?.heading }}
       </h3>
 
-      <div class="vue-nest-poc__table-wrap">
-        <table class="vue-nest-poc__table">
+      <div class="overflow-x-auto rounded-[0.5rem] border border-[rgba(var(--color-foreground,18,18,18),0.12)]">
+        <table class="w-full min-w-[58rem] border-collapse">
           <thead>
             <tr>
-              <th v-for="column in sizeChart?.columns" :key="column" scope="col">
+              <th
+                v-for="column in sizeChart?.columns"
+                :key="column"
+                scope="col"
+                class="border-b border-[rgba(var(--color-foreground,18,18,18),0.1)] bg-[rgba(var(--color-foreground,18,18,18),0.05)] p-5 text-center font-semibold"
+              >
                 {{ column }}
               </th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="row in sizeChartRows" :key="row.size">
-              <th scope="row">{{ row.size }}</th>
-              <td>{{ row.shoulder }}</td>
-              <td>{{ row.chest }}</td>
-              <td>{{ row.length }}</td>
-              <td>{{ row.sleeve }}</td>
+              <th
+                scope="row"
+                class="border-b border-[rgba(var(--color-foreground,18,18,18),0.1)] p-5 text-center last:border-b-0"
+              >
+                {{ row.size }}
+              </th>
+              <td class="border-b border-[rgba(var(--color-foreground,18,18,18),0.1)] p-5 text-center last:border-b-0">
+                {{ row.shoulder }}
+              </td>
+              <td class="border-b border-[rgba(var(--color-foreground,18,18,18),0.1)] p-5 text-center last:border-b-0">
+                {{ row.chest }}
+              </td>
+              <td class="border-b border-[rgba(var(--color-foreground,18,18,18),0.1)] p-5 text-center last:border-b-0">
+                {{ row.length }}
+              </td>
+              <td class="border-b border-[rgba(var(--color-foreground,18,18,18),0.1)] p-5 text-center last:border-b-0">
+                {{ row.sleeve }}
+              </td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <p v-if="sizeChart?.note" class="vue-nest-poc__size-note">
+      <p v-if="sizeChart?.note" class="m-0 text-[1.3rem] leading-normal text-[rgba(var(--color-foreground,18,18,18),0.72)]">
         {{ sizeChart.note }}
       </p>
     </section>
