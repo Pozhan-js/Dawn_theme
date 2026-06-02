@@ -1,0 +1,186 @@
+.vue-nest-poc {
+  color: rgba(var(--color-foreground, 18, 18, 18), 0.88);
+}
+
+.vue-nest-poc__eyebrow {
+  margin: 0 0 0.4rem;
+  font-size: 1.2rem;
+  line-height: 1.4;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  color: rgba(var(--color-foreground, 18, 18, 18), 0.65);
+}
+
+.vue-nest-poc__heading {
+  margin: 0 0 1.2rem;
+  font-size: 2rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.vue-nest-poc__status,
+.vue-nest-poc__meta {
+  margin: 0;
+  font-size: 1.4rem;
+  line-height: 1.5;
+}
+
+.vue-nest-poc__status--error {
+  color: #cf1322;
+}
+
+.vue-nest-poc__source {
+  display: grid;
+  gap: 0.8rem;
+  margin: 0 0 1.6rem;
+  padding: 1.2rem;
+  border: 1px solid rgba(var(--color-foreground, 18, 18, 18), 0.08);
+  border-radius: 0.5rem;
+  background: rgba(var(--color-foreground, 18, 18, 18), 0.035);
+}
+
+.vue-nest-poc__source-label {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.vue-nest-poc__source-list {
+  display: grid;
+  gap: 0.6rem;
+  margin: 0;
+}
+
+.vue-nest-poc__source-list div {
+  display: grid;
+  grid-template-columns: 7rem minmax(0, 1fr);
+  gap: 0.8rem;
+}
+
+.vue-nest-poc__source-list dt,
+.vue-nest-poc__source-list dd {
+  margin: 0;
+  font-size: 1.3rem;
+  line-height: 1.4;
+}
+
+.vue-nest-poc__source-list dt {
+  color: rgba(var(--color-foreground, 18, 18, 18), 0.62);
+}
+
+.vue-nest-poc__source-list dd {
+  overflow-wrap: anywhere;
+}
+
+.vue-nest-poc__list {
+  display: grid;
+  gap: 1rem;
+  margin: 0 0 1.6rem;
+  padding: 0;
+  list-style: none;
+}
+
+.vue-nest-poc__item {
+  padding: 1.2rem;
+  border: 1px solid rgba(var(--color-foreground, 18, 18, 18), 0.1);
+  border-radius: 0.5rem;
+  background: rgba(var(--color-background, 255, 255, 255), 0.75);
+}
+
+.vue-nest-poc__item-title {
+  margin: 0 0 0.4rem;
+  font-size: 1.6rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.vue-nest-poc__item-description {
+  margin: 0;
+  font-size: 1.4rem;
+  line-height: 1.5;
+  color: rgba(var(--color-foreground, 18, 18, 18), 0.72);
+}
+
+.vue-nest-poc__size-chart {
+  display: grid;
+  gap: 1.2rem;
+  margin-top: 2rem;
+}
+
+.vue-nest-poc__size-heading {
+  margin: 0;
+  font-size: 1.8rem;
+  line-height: 1.4;
+}
+
+.vue-nest-poc__table-wrap {
+  overflow-x: auto;
+  border: 1px solid rgba(var(--color-foreground, 18, 18, 18), 0.12);
+  border-radius: 0.5rem;
+}
+
+.vue-nest-poc__table {
+  width: 100%;
+  min-width: 58rem;
+  border-collapse: collapse;
+}
+
+.vue-nest-poc__table th,
+.vue-nest-poc__table td {
+  padding: 1.2rem;
+  border-bottom: 1px solid rgba(var(--color-foreground, 18, 18, 18), 0.1);
+  text-align: center;
+}
+
+.vue-nest-poc__table thead th {
+  background: rgba(var(--color-foreground, 18, 18, 18), 0.05);
+  font-weight: 600;
+}
+
+.vue-nest-poc__table tbody tr:last-child th,
+.vue-nest-poc__table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.vue-nest-poc__size-note {
+  margin: 0;
+  color: rgba(var(--color-foreground, 18, 18, 18), 0.72);
+  font-size: 1.3rem;
+  line-height: 1.5;
+}
+
+.vue-nest-poc-section {
+  padding: 2rem 0;
+}
+
+.vue-nest-poc-section__inner {
+  margin: 0 auto;
+  max-width: var(--page-width);
+  padding: 0 1.5rem;
+}
+
+[data-vue-nest-poc] {
+  padding: 2rem;
+  border: 1px solid rgba(var(--color-foreground, 18, 18, 18), 0.12);
+  border-radius: 0.5rem;
+  background: rgb(var(--color-background, 255, 255, 255));
+}
+
+[data-vue-nest-poc] > p {
+  margin: 0;
+  font-size: 1.4rem;
+  line-height: 1.5;
+  color: rgba(var(--color-foreground, 18, 18, 18), 0.65);
+}
+
+@media screen and (min-width: 750px) {
+  .vue-nest-poc-section__inner {
+    padding: 0 5rem;
+  }
+}
+
+@media screen and (max-width: 749px) {
+  #app {
+    padding: 1rem;
+  }
+}

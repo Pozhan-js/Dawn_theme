@@ -1,8 +1,25 @@
+{%- liquid
+  assign size_chart_metaobject = blank
+
+  if product != blank
+    assign size_chart_metafield = product.metafields[section.settings.metafield_namespace][section.settings.metafield_key]
+    assign size_chart_metaobject = size_chart_metafield.value
+  endif
+
+  if size_chart_metaobject == blank and section.settings.metaobject_handle != blank
+    assign size_chart_metaobject = metaobjects[section.settings.metaobject_type][section.settings.metaobject_handle]
+  endif
+
+  assign size_chart_heading = size_chart_metaobject.title.value | default: section.settings.heading
+  assign size_chart_note = size_chart_metaobject.note.value | default: section.settings.note
+  assign size_chart_rows_raw = size_chart_metaobject.rows.value
+-%}
+
 <section class="my-test-page-1 color-{{ section.settings.color_scheme }} gradient">
   <div class="page-width my-test-page-1__inner">
-    {%- if section.settings.heading != blank -%}
+    {%- if size_chart_heading != blank -%}
       <h2 class="my-test-page-1__heading inline-richtext {{ section.settings.heading_size }}">
-        {{ section.settings.heading }}
+        {{ size_chart_heading }}
       </h2>
     {%- endif -%}
 
@@ -27,21 +44,38 @@
           </tr>
         </thead>
         <tbody>
-          {%- for block in section.blocks -%}
-            <tr {{ block.shopify_attributes }}>
-              <th scope="row">{{ block.settings.size }}</th>
-              <td>{{ block.settings.shoulder }}</td>
-              <td>{{ block.settings.chest }}</td>
-              <td>{{ block.settings.length }}</td>
-              <td>{{ block.settings.sleeve }}</td>
-            </tr>
-          {%- endfor -%}
+          {%- if size_chart_rows_raw != blank -%}
+            {%- assign size_chart_lines = size_chart_rows_raw | newline_to_br | split: '<br />' -%}
+            {%- for line in size_chart_lines -%}
+              {%- assign row_text = line | strip -%}
+              {%- if row_text != blank -%}
+                {%- assign cells = row_text | split: '|' -%}
+                <tr>
+                  <th scope="row">{{ cells[0] | strip }}</th>
+                  <td>{{ cells[1] | strip }}</td>
+                  <td>{{ cells[2] | strip }}</td>
+                  <td>{{ cells[3] | strip }}</td>
+                  <td>{{ cells[4] | strip }}</td>
+                </tr>
+              {%- endif -%}
+            {%- endfor -%}
+          {%- else -%}
+            {%- for block in section.blocks -%}
+              <tr {{ block.shopify_attributes }}>
+                <th scope="row">{{ block.settings.size }}</th>
+                <td>{{ block.settings.shoulder }}</td>
+                <td>{{ block.settings.chest }}</td>
+                <td>{{ block.settings.length }}</td>
+                <td>{{ block.settings.sleeve }}</td>
+              </tr>
+            {%- endfor -%}
+          {%- endif -%}
         </tbody>
       </table>
     </div>
 
-    {%- if section.settings.note != blank -%}
-      <p class="my-test-page-1__note">{{ section.settings.note }}</p>
+    {%- if size_chart_note != blank -%}
+      <p class="my-test-page-1__note">{{ size_chart_note }}</p>
     {%- endif -%}
   </div>
 </section>
@@ -171,6 +205,30 @@
         "id": "note",
         "label": "Note",
         "default": "建议优先参考胸围和肩宽选择尺码。"
+      },
+      {
+        "type": "text",
+        "id": "metafield_namespace",
+        "label": "Product metafield namespace",
+        "default": "custom"
+      },
+      {
+        "type": "text",
+        "id": "metafield_key",
+        "label": "Product metafield key",
+        "default": "size_chart"
+      },
+      {
+        "type": "text",
+        "id": "metaobject_type",
+        "label": "Fallback metaobject type",
+        "default": "size_chart"
+      },
+      {
+        "type": "text",
+        "id": "metaobject_handle",
+        "label": "Fallback metaobject handle",
+        "default": "man_shot_on_table"
       },
       {
         "type": "color_scheme",
