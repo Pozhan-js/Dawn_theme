@@ -1,0 +1,569 @@
+{
+  "version": "1.0.0",
+  "project": {
+    "name": "Dawn_theme",
+    "languages": ["Liquid", "JSON", "JavaScript", "TypeScript", "Vue", "CSS"],
+    "frameworks": ["Shopify Dawn", "Online Store 2.0", "Vue 3", "NestJS", "Vite"],
+    "description": "Shopify Dawn theme export that renders an Online Store 2.0 storefront, including merchandising pages, product detail purchase flows, cart management, customer pages, localization, and a local Vue plus NestJS proof of concept mounted inside a Liquid section.",
+    "analyzedAt": "2026-06-03T08:07:59Z",
+    "gitCommitHash": "524bacfed0e94fa2b381935188b104b287b8760f"
+  },
+  "nodes": [
+    {
+      "id": "domain:storefront-merchandising",
+      "type": "domain",
+      "name": "Storefront Merchandising",
+      "summary": "Controls how products, collections, blog content, banners, and custom editorial sections are assembled into storefront pages. Merchants configure these surfaces through Online Store 2.0 templates and section schemas.",
+      "tags": ["shopify-theme", "merchandising", "sections"],
+      "complexity": "moderate",
+      "domainMeta": {
+        "entities": ["Home page", "Collection", "Featured collection", "Blog article", "My Feature section"],
+        "businessRules": ["Template JSON order determines section rendering order.", "Merchant-editable section settings should remain stable because Shopify admin may rewrite template JSON."],
+        "crossDomainInteractions": ["Product cards can enter purchase flows through quick add.", "Collection filters depend on search and discovery configuration."]
+      }
+    },
+    {
+      "id": "domain:product-detail-and-sizing",
+      "type": "domain",
+      "name": "Product Detail and Sizing",
+      "summary": "Renders product media, title, vendor, price, variant selection, quantity rules, dynamic checkout, descriptions, share links, related products, and size charts. The size chart extension reads product metafields and metaobjects and falls back to configured block data in test surfaces.",
+      "tags": ["product", "pdp", "metafields", "size-chart"],
+      "complexity": "complex",
+      "domainMeta": {
+        "entities": ["Product", "Variant", "Media", "Quantity rule", "Size chart metaobject", "Related products"],
+        "businessRules": ["Variant-dependent price, SKU, quantity rules, and media must update without losing form state.", "Size chart rows are pipe-delimited metaobject data when available.", "Dynamic checkout and gift card recipient options are merchant-configurable blocks."],
+        "crossDomainInteractions": ["Successful product form submission updates cart UI.", "Size chart data can be rendered either directly by Liquid or by the Vue Nest POC."]
+      }
+    },
+    {
+      "id": "domain:cart-and-checkout-handoff",
+      "type": "domain",
+      "name": "Cart and Checkout Handoff",
+      "summary": "Manages add-to-cart, cart drawer or notification rendering, cart line quantity changes, cart note updates, totals, discounts, and checkout button handoff. JavaScript fetches Shopify cart endpoints and re-renders only affected sections.",
+      "tags": ["cart", "checkout", "ajax"],
+      "complexity": "complex",
+      "domainMeta": {
+        "entities": ["Cart", "Cart line item", "Cart drawer", "Cart notification", "Checkout button", "Discount"],
+        "businessRules": ["Cart section rendering must keep item counts, totals, live regions, and focus state in sync.", "Quantity changes submit to Shopify cart endpoints and must show line-level errors when rejected.", "Checkout remains a Shopify-hosted handoff from the cart form."],
+        "crossDomainInteractions": ["Product forms and quick add publish cart update events.", "Header cart badge reflects cart state."]
+      }
+    },
+    {
+      "id": "domain:storefront-discovery",
+      "type": "domain",
+      "name": "Storefront Discovery",
+      "summary": "Supports customer discovery through collection product grids, faceted filtering, sorting, search pages, and predictive search. The implementation fetches section HTML and swaps only relevant fragments for responsive filter and result updates.",
+      "tags": ["collection", "search", "facets", "predictive-search"],
+      "complexity": "moderate",
+      "domainMeta": {
+        "entities": ["Collection grid", "Facet", "Filter value", "Search result", "Predictive search result"],
+        "businessRules": ["Facet and sorting URLs drive product grid state.", "Predictive search must debounce user input and preserve accessible live-region feedback.", "Collection sections expose filtering, sorting, image ratio, quick add, and pagination settings."],
+        "crossDomainInteractions": ["Discovery cards route shoppers to product detail or quick add.", "Localization affects URLs and translated storefront labels."]
+      }
+    },
+    {
+      "id": "domain:customer-and-localization",
+      "type": "domain",
+      "name": "Customer and Localization",
+      "summary": "Provides account, login, register, order, address, password, country, and language storefront surfaces. Customer address interactions are handled client-side while text and locale options are sourced from Shopify translations and localization data.",
+      "tags": ["customer", "account", "localization"],
+      "complexity": "moderate",
+      "domainMeta": {
+        "entities": ["Customer", "Address", "Order", "Country selector", "Language selector", "Translation"],
+        "businessRules": ["Customer templates must keep Shopify customer routes and forms intact.", "Address deletion requires confirmation text.", "Locale and country forms submit Shopify-supported localization values."],
+        "crossDomainInteractions": ["Header and footer expose account and localization entry points.", "Cart and orders share customer-facing money, discount, duty, and tax labels."]
+      }
+    },
+    {
+      "id": "domain:vue-nest-poc-integration",
+      "type": "domain",
+      "name": "Vue Nest POC Integration",
+      "summary": "Demonstrates how a Vue application can mount inside a Shopify Liquid section and call a local NestJS API. The section serializes page and size-chart context for Vue while the backend returns scaffolded integration steps.",
+      "tags": ["vue", "nestjs", "poc", "hybrid-section"],
+      "complexity": "moderate",
+      "domainMeta": {
+        "entities": ["Vue mount root", "Liquid source JSON", "POC API response", "Size chart row", "Nest service item"],
+        "businessRules": ["Vue only mounts inside elements marked data-vue-nest-poc.", "Liquid source data is read from adjacent application/json script content.", "If metaobject size rows are absent, Vue renders section block rows."],
+        "crossDomainInteractions": ["Reads product/page custom data from Shopify Liquid.", "Can display backend API content alongside Shopify-rendered size chart data."]
+      }
+    },
+    {
+      "id": "flow:build-homepage-merchandising",
+      "type": "flow",
+      "name": "Build Homepage Merchandising",
+      "summary": "Composes the home page from image banner, featured collection, custom accordion feature, and featured blog sections configured in index.json.",
+      "tags": ["homepage", "sections"],
+      "complexity": "simple",
+      "domainMeta": {
+        "entryPoint": "Shopify renders templates/index.json",
+        "entryType": "manual"
+      }
+    },
+    {
+      "id": "flow:render-product-purchase-surface",
+      "type": "flow",
+      "name": "Render Product Purchase Surface",
+      "summary": "Builds the product detail page with media gallery, product info blocks, variant picker, quantity rules, buy buttons, size chart, share controls, and related products.",
+      "tags": ["pdp", "variant", "purchase"],
+      "complexity": "complex",
+      "domainMeta": {
+        "entryPoint": "Shopify renders templates/product.json",
+        "entryType": "manual"
+      }
+    },
+    {
+      "id": "flow:render-product-size-chart",
+      "type": "flow",
+      "name": "Render Product Size Chart",
+      "summary": "Reads a product size_chart metafield metaobject and renders pipe-delimited sizing rows into an accessible table.",
+      "tags": ["size-chart", "metafield", "metaobject"],
+      "complexity": "moderate",
+      "domainMeta": {
+        "entryPoint": "main-product size_chart block",
+        "entryType": "manual"
+      }
+    },
+    {
+      "id": "flow:add-product-to-cart",
+      "type": "flow",
+      "name": "Add Product To Cart",
+      "summary": "Submits product form data to Shopify cart add endpoint and updates cart drawer or notification sections with the returned state.",
+      "tags": ["cart", "product-form", "ajax"],
+      "complexity": "moderate",
+      "domainMeta": {
+        "entryPoint": "product-form submit",
+        "entryType": "event"
+      }
+    },
+    {
+      "id": "flow:update-cart-lines-and-checkout",
+      "type": "flow",
+      "name": "Update Cart Lines And Checkout",
+      "summary": "Allows shoppers to change quantities, remove items, update notes, review totals, and continue to Shopify checkout.",
+      "tags": ["cart", "quantity", "checkout"],
+      "complexity": "complex",
+      "domainMeta": {
+        "entryPoint": "cart-items quantity or remove action",
+        "entryType": "event"
+      }
+    },
+    {
+      "id": "flow:browse-collection-with-facets",
+      "type": "flow",
+      "name": "Browse Collection With Facets",
+      "summary": "Renders collection products with merchant-selected filter, sort, pagination, card, and quick add settings.",
+      "tags": ["collection", "facets", "sorting"],
+      "complexity": "moderate",
+      "domainMeta": {
+        "entryPoint": "Shopify renders templates/collection.json",
+        "entryType": "manual"
+      }
+    },
+    {
+      "id": "flow:perform-predictive-search",
+      "type": "flow",
+      "name": "Perform Predictive Search",
+      "summary": "Handles search input changes, fetches predictive search section HTML, and updates result markup and accessibility status.",
+      "tags": ["search", "predictive-search"],
+      "complexity": "moderate",
+      "domainMeta": {
+        "entryPoint": "predictive-search input event",
+        "entryType": "event"
+      }
+    },
+    {
+      "id": "flow:manage-customer-account",
+      "type": "flow",
+      "name": "Manage Customer Account",
+      "summary": "Renders customer account, order, login, register, reset password, activate account, and address management templates.",
+      "tags": ["customer", "account", "address"],
+      "complexity": "moderate",
+      "domainMeta": {
+        "entryPoint": "Shopify customer templates",
+        "entryType": "manual"
+      }
+    },
+    {
+      "id": "flow:mount-vue-nest-poc-section",
+      "type": "flow",
+      "name": "Mount Vue Nest POC Section",
+      "summary": "Mounts a Vue app inside a Liquid section, passes Shopify page and size chart data, fetches Nest API content, and renders a combined POC panel.",
+      "tags": ["vue", "nestjs", "liquid-section"],
+      "complexity": "moderate",
+      "domainMeta": {
+        "entryPoint": "sections/vue-nest-poc.liquid",
+        "entryType": "manual"
+      }
+    },
+    {
+      "id": "step:build-homepage-merchandising:load-index-template",
+      "type": "step",
+      "name": "Load Index Template",
+      "summary": "Shopify reads index.json and determines section order for image banner, featured collection, custom feature, and featured blog.",
+      "tags": ["template-json"],
+      "complexity": "simple",
+      "filePath": "templates/index.json",
+      "lineRange": [1, 101]
+    },
+    {
+      "id": "step:build-homepage-merchandising:render-banner-cta",
+      "type": "step",
+      "name": "Render Banner CTA",
+      "summary": "The image banner presents the main browse message and a Shop all button linking to the all collection.",
+      "tags": ["banner", "cta"],
+      "complexity": "simple",
+      "filePath": "templates/index.json",
+      "lineRange": [10, 38]
+    },
+    {
+      "id": "step:build-homepage-merchandising:render-featured-products",
+      "type": "step",
+      "name": "Render Featured Products",
+      "summary": "Featured collection settings select the all collection, show eight products, enable secondary images, and expose a view-all action.",
+      "tags": ["featured-collection", "product-card"],
+      "complexity": "simple",
+      "filePath": "sections/featured-collection.liquid",
+      "lineRange": [1, 140]
+    },
+    {
+      "id": "step:build-homepage-merchandising:render-custom-accordion-feature",
+      "type": "step",
+      "name": "Render Custom Accordion Feature",
+      "summary": "The custom My Feature section exposes title, subtitle, accordion mode, and accordion item blocks for merchant-managed content.",
+      "tags": ["custom-section", "accordion"],
+      "complexity": "simple",
+      "filePath": "sections/my-feature.liquid",
+      "lineRange": [1, 64]
+    },
+    {
+      "id": "step:render-product-purchase-surface:load-product-template",
+      "type": "step",
+      "name": "Load Product Template",
+      "summary": "Product JSON configures main-product and related-products sections and orders product information blocks.",
+      "tags": ["product-template"],
+      "complexity": "simple",
+      "filePath": "templates/product.json",
+      "lineRange": [1, 85]
+    },
+    {
+      "id": "step:render-product-purchase-surface:render-media-gallery",
+      "type": "step",
+      "name": "Render Media Gallery",
+      "summary": "main-product computes variant images and renders the product-media-gallery snippet with media layout and zoom settings.",
+      "tags": ["media", "gallery"],
+      "complexity": "moderate",
+      "filePath": "sections/main-product.liquid",
+      "lineRange": [76, 91]
+    },
+    {
+      "id": "step:render-product-purchase-surface:render-product-info-blocks",
+      "type": "step",
+      "name": "Render Product Info Blocks",
+      "summary": "The section loops through configured blocks and renders vendor text, title, price, inventory, SKU, description, custom Liquid, accordions, and sharing.",
+      "tags": ["blocks", "product-info"],
+      "complexity": "moderate",
+      "filePath": "sections/main-product.liquid",
+      "lineRange": [97, 520]
+    },
+    {
+      "id": "step:render-product-purchase-surface:render-variant-and-buy-buttons",
+      "type": "step",
+      "name": "Render Variant And Buy Buttons",
+      "summary": "Variant picker and buy button snippets receive the product form id so variant selection, dynamic checkout, and pickup availability stay connected.",
+      "tags": ["variant-picker", "buy-buttons"],
+      "complexity": "moderate",
+      "filePath": "sections/main-product.liquid",
+      "lineRange": [508, 518]
+    },
+    {
+      "id": "step:render-product-size-chart:resolve-metaobject",
+      "type": "step",
+      "name": "Resolve Metaobject",
+      "summary": "The size chart snippet reads product.metafields.custom.size_chart.value and prepares rows, note, and heading values.",
+      "tags": ["metafield", "metaobject"],
+      "complexity": "moderate",
+      "filePath": "snippets/product-size-chart.liquid",
+      "lineRange": [1, 10]
+    },
+    {
+      "id": "step:render-product-size-chart:parse-size-rows",
+      "type": "step",
+      "name": "Parse Size Rows",
+      "summary": "Rows are split by line and pipe delimiters into size, shoulder, chest, length, and sleeve cells.",
+      "tags": ["size-data", "table"],
+      "complexity": "moderate",
+      "filePath": "snippets/product-size-chart.liquid",
+      "lineRange": [32, 50]
+    },
+    {
+      "id": "step:render-product-size-chart:render-accessible-table",
+      "type": "step",
+      "name": "Render Accessible Table",
+      "summary": "The snippet renders an accordion with a captioned table and optional note only when size chart data exists.",
+      "tags": ["accessibility", "accordion"],
+      "complexity": "simple",
+      "filePath": "snippets/product-size-chart.liquid",
+      "lineRange": [12, 65]
+    },
+    {
+      "id": "step:add-product-to-cart:capture-form-submit",
+      "type": "step",
+      "name": "Capture Form Submit",
+      "summary": "product-form prevents the default submit, disables the submit button, prepares form data, and optionally requests cart sections.",
+      "tags": ["form-submit"],
+      "complexity": "moderate",
+      "filePath": "assets/product-form.js",
+      "lineRange": [1, 45]
+    },
+    {
+      "id": "step:add-product-to-cart:post-cart-add",
+      "type": "step",
+      "name": "Post Cart Add",
+      "summary": "The form sends a fetch request to routes.cart_add_url and handles both error and success responses.",
+      "tags": ["ajax", "cart-add"],
+      "complexity": "moderate",
+      "filePath": "assets/product-form.js",
+      "lineRange": [45, 75]
+    },
+    {
+      "id": "step:add-product-to-cart:render-cart-feedback",
+      "type": "step",
+      "name": "Render Cart Feedback",
+      "summary": "On success the cart drawer or notification renders returned section content, publishes cart updates, and restores interactive state.",
+      "tags": ["cart-drawer", "notification"],
+      "complexity": "moderate",
+      "filePath": "assets/product-form.js",
+      "lineRange": [76, 111]
+    },
+    {
+      "id": "step:update-cart-lines-and-checkout:render-cart-template",
+      "type": "step",
+      "name": "Render Cart Template",
+      "summary": "cart.json composes cart line items and cart footer sections for the full cart page.",
+      "tags": ["cart-template"],
+      "complexity": "simple",
+      "filePath": "templates/cart.json",
+      "lineRange": [1, 39]
+    },
+    {
+      "id": "step:update-cart-lines-and-checkout:change-line-quantity",
+      "type": "step",
+      "name": "Change Line Quantity",
+      "summary": "CartItems posts line, quantity, and section data to Shopify cart_change_url when a shopper edits or removes a cart line.",
+      "tags": ["quantity", "cart-change"],
+      "complexity": "complex",
+      "filePath": "assets/cart.js",
+      "lineRange": [145, 222]
+    },
+    {
+      "id": "step:update-cart-lines-and-checkout:update-cart-note",
+      "type": "step",
+      "name": "Update Cart Note",
+      "summary": "cart-note listens for text changes and posts note updates to Shopify cart_update_url.",
+      "tags": ["cart-note"],
+      "complexity": "simple",
+      "filePath": "assets/cart.js",
+      "lineRange": [278, 296]
+    },
+    {
+      "id": "step:update-cart-lines-and-checkout:render-totals-and-checkout",
+      "type": "step",
+      "name": "Render Totals And Checkout",
+      "summary": "The cart footer displays subtotal, discounts, duty and tax messaging, dynamic checkout buttons, and the checkout submit button.",
+      "tags": ["totals", "checkout"],
+      "complexity": "moderate",
+      "filePath": "sections/main-cart-footer.liquid",
+      "lineRange": [1, 130]
+    },
+    {
+      "id": "step:browse-collection-with-facets:load-collection-template",
+      "type": "step",
+      "name": "Load Collection Template",
+      "summary": "collection.json configures banner and product grid sections, including image ratio, quick add, filtering, sorting, and pagination settings.",
+      "tags": ["collection-template"],
+      "complexity": "simple",
+      "filePath": "templates/collection.json",
+      "lineRange": [1, 40]
+    },
+    {
+      "id": "step:browse-collection-with-facets:render-facet-form",
+      "type": "step",
+      "name": "Render Facet Form",
+      "summary": "The facets snippet renders desktop and mobile filter controls, active filters, and sorting controls from Shopify collection filter data.",
+      "tags": ["facets", "filters"],
+      "complexity": "moderate",
+      "filePath": "snippets/facets.liquid",
+      "lineRange": [1, 320]
+    },
+    {
+      "id": "step:browse-collection-with-facets:update-results-html",
+      "type": "step",
+      "name": "Update Results HTML",
+      "summary": "FacetFiltersForm fetches updated section HTML for selected filters and replaces product grid, counts, active facets, and related controls.",
+      "tags": ["section-rendering", "ajax"],
+      "complexity": "moderate",
+      "filePath": "assets/facets.js",
+      "lineRange": [1, 240]
+    },
+    {
+      "id": "step:perform-predictive-search:read-search-term",
+      "type": "step",
+      "name": "Read Search Term",
+      "summary": "PredictiveSearch tracks input state, aborts stale requests, and keeps open or closed state synchronized with the current query.",
+      "tags": ["input", "debounce"],
+      "complexity": "moderate",
+      "filePath": "assets/predictive-search.js",
+      "lineRange": [1, 80]
+    },
+    {
+      "id": "step:perform-predictive-search:fetch-predictive-results",
+      "type": "step",
+      "name": "Fetch Predictive Results",
+      "summary": "The component fetches Shopify predictive_search_url with the search term and predictive-search section id.",
+      "tags": ["predictive-search", "fetch"],
+      "complexity": "moderate",
+      "filePath": "assets/predictive-search.js",
+      "lineRange": [170, 205]
+    },
+    {
+      "id": "step:perform-predictive-search:render-accessible-results",
+      "type": "step",
+      "name": "Render Accessible Results",
+      "summary": "Returned markup is inserted into the results container, keyboard navigation state is managed, and live-region status text is updated.",
+      "tags": ["accessibility", "results"],
+      "complexity": "moderate",
+      "filePath": "assets/predictive-search.js",
+      "lineRange": [206, 277]
+    },
+    {
+      "id": "step:manage-customer-account:render-customer-templates",
+      "type": "step",
+      "name": "Render Customer Templates",
+      "summary": "Customer JSON templates map account, orders, login, register, reset password, activate account, and addresses to Dawn customer sections.",
+      "tags": ["customer-templates"],
+      "complexity": "simple",
+      "filePath": "templates/customers/account.json",
+      "lineRange": [1, 40]
+    },
+    {
+      "id": "step:manage-customer-account:handle-address-ui",
+      "type": "step",
+      "name": "Handle Address UI",
+      "summary": "CustomerAddresses toggles address forms, initializes country/province selectors, and confirms delete actions.",
+      "tags": ["addresses", "forms"],
+      "complexity": "moderate",
+      "filePath": "assets/customer.js",
+      "lineRange": [1, 85]
+    },
+    {
+      "id": "step:manage-customer-account:submit-localization-form",
+      "type": "step",
+      "name": "Submit Localization Form",
+      "summary": "Localization forms read selected locale or country values and submit the Shopify localization form for storefront switching.",
+      "tags": ["localization", "forms"],
+      "complexity": "moderate",
+      "filePath": "assets/localization-form.js",
+      "lineRange": [1, 206]
+    },
+    {
+      "id": "step:mount-vue-nest-poc-section:serialize-liquid-context",
+      "type": "step",
+      "name": "Serialize Liquid Context",
+      "summary": "The Liquid section emits a Vue mount node and adjacent JSON script containing page metadata and size chart data from metafields, metaobjects, or blocks.",
+      "tags": ["liquid", "source-data"],
+      "complexity": "moderate",
+      "filePath": "sections/vue-nest-poc.liquid",
+      "lineRange": [1, 65]
+    },
+    {
+      "id": "step:mount-vue-nest-poc-section:mount-vue-app",
+      "type": "step",
+      "name": "Mount Vue App",
+      "summary": "frontend/src/main.ts locates data-vue-nest-poc roots, parses the adjacent JSON source, mounts Vue once per root, and remounts on Shopify section load events.",
+      "tags": ["vue", "mount"],
+      "complexity": "moderate",
+      "filePath": "frontend/src/main.ts",
+      "lineRange": [1, 47]
+    },
+    {
+      "id": "step:mount-vue-nest-poc-section:fetch-nest-api",
+      "type": "step",
+      "name": "Fetch Nest API",
+      "summary": "The Vue component requests the configured API URL and stores loading, error, and response states.",
+      "tags": ["fetch", "nestjs"],
+      "complexity": "moderate",
+      "filePath": "frontend/src/App.vue",
+      "lineRange": [65, 90]
+    },
+    {
+      "id": "step:mount-vue-nest-poc-section:return-poc-data",
+      "type": "step",
+      "name": "Return POC Data",
+      "summary": "Nest routes GET /api/vue-nest-poc through AppController to AppService, which returns scaffolded Liquid, Vue, and Nest integration items.",
+      "tags": ["nestjs", "api"],
+      "complexity": "simple",
+      "filePath": "backend/src/app.service.ts",
+      "lineRange": [1, 37]
+    },
+    {
+      "id": "step:mount-vue-nest-poc-section:render-combined-panel",
+      "type": "step",
+      "name": "Render Combined Panel",
+      "summary": "App.vue renders source page metadata, metafield status, Nest response cards, and the size chart table with fallback row parsing.",
+      "tags": ["vue-template", "size-chart"],
+      "complexity": "moderate",
+      "filePath": "frontend/src/App.vue",
+      "lineRange": [92, 190]
+    }
+  ],
+  "edges": [
+    { "source": "domain:storefront-merchandising", "target": "flow:build-homepage-merchandising", "type": "contains_flow", "direction": "forward", "weight": 1.0 },
+    { "source": "domain:product-detail-and-sizing", "target": "flow:render-product-purchase-surface", "type": "contains_flow", "direction": "forward", "weight": 1.0 },
+    { "source": "domain:product-detail-and-sizing", "target": "flow:render-product-size-chart", "type": "contains_flow", "direction": "forward", "weight": 1.0 },
+    { "source": "domain:cart-and-checkout-handoff", "target": "flow:add-product-to-cart", "type": "contains_flow", "direction": "forward", "weight": 1.0 },
+    { "source": "domain:cart-and-checkout-handoff", "target": "flow:update-cart-lines-and-checkout", "type": "contains_flow", "direction": "forward", "weight": 1.0 },
+    { "source": "domain:storefront-discovery", "target": "flow:browse-collection-with-facets", "type": "contains_flow", "direction": "forward", "weight": 1.0 },
+    { "source": "domain:storefront-discovery", "target": "flow:perform-predictive-search", "type": "contains_flow", "direction": "forward", "weight": 1.0 },
+    { "source": "domain:customer-and-localization", "target": "flow:manage-customer-account", "type": "contains_flow", "direction": "forward", "weight": 1.0 },
+    { "source": "domain:vue-nest-poc-integration", "target": "flow:mount-vue-nest-poc-section", "type": "contains_flow", "direction": "forward", "weight": 1.0 },
+    { "source": "flow:build-homepage-merchandising", "target": "step:build-homepage-merchandising:load-index-template", "type": "flow_step", "direction": "forward", "weight": 0.2 },
+    { "source": "flow:build-homepage-merchandising", "target": "step:build-homepage-merchandising:render-banner-cta", "type": "flow_step", "direction": "forward", "weight": 0.4 },
+    { "source": "flow:build-homepage-merchandising", "target": "step:build-homepage-merchandising:render-featured-products", "type": "flow_step", "direction": "forward", "weight": 0.6 },
+    { "source": "flow:build-homepage-merchandising", "target": "step:build-homepage-merchandising:render-custom-accordion-feature", "type": "flow_step", "direction": "forward", "weight": 0.8 },
+    { "source": "flow:render-product-purchase-surface", "target": "step:render-product-purchase-surface:load-product-template", "type": "flow_step", "direction": "forward", "weight": 0.2 },
+    { "source": "flow:render-product-purchase-surface", "target": "step:render-product-purchase-surface:render-media-gallery", "type": "flow_step", "direction": "forward", "weight": 0.4 },
+    { "source": "flow:render-product-purchase-surface", "target": "step:render-product-purchase-surface:render-product-info-blocks", "type": "flow_step", "direction": "forward", "weight": 0.6 },
+    { "source": "flow:render-product-purchase-surface", "target": "step:render-product-purchase-surface:render-variant-and-buy-buttons", "type": "flow_step", "direction": "forward", "weight": 0.8 },
+    { "source": "flow:render-product-size-chart", "target": "step:render-product-size-chart:resolve-metaobject", "type": "flow_step", "direction": "forward", "weight": 0.3 },
+    { "source": "flow:render-product-size-chart", "target": "step:render-product-size-chart:parse-size-rows", "type": "flow_step", "direction": "forward", "weight": 0.6 },
+    { "source": "flow:render-product-size-chart", "target": "step:render-product-size-chart:render-accessible-table", "type": "flow_step", "direction": "forward", "weight": 0.9 },
+    { "source": "flow:add-product-to-cart", "target": "step:add-product-to-cart:capture-form-submit", "type": "flow_step", "direction": "forward", "weight": 0.3 },
+    { "source": "flow:add-product-to-cart", "target": "step:add-product-to-cart:post-cart-add", "type": "flow_step", "direction": "forward", "weight": 0.6 },
+    { "source": "flow:add-product-to-cart", "target": "step:add-product-to-cart:render-cart-feedback", "type": "flow_step", "direction": "forward", "weight": 0.9 },
+    { "source": "flow:update-cart-lines-and-checkout", "target": "step:update-cart-lines-and-checkout:render-cart-template", "type": "flow_step", "direction": "forward", "weight": 0.2 },
+    { "source": "flow:update-cart-lines-and-checkout", "target": "step:update-cart-lines-and-checkout:change-line-quantity", "type": "flow_step", "direction": "forward", "weight": 0.4 },
+    { "source": "flow:update-cart-lines-and-checkout", "target": "step:update-cart-lines-and-checkout:update-cart-note", "type": "flow_step", "direction": "forward", "weight": 0.6 },
+    { "source": "flow:update-cart-lines-and-checkout", "target": "step:update-cart-lines-and-checkout:render-totals-and-checkout", "type": "flow_step", "direction": "forward", "weight": 0.8 },
+    { "source": "flow:browse-collection-with-facets", "target": "step:browse-collection-with-facets:load-collection-template", "type": "flow_step", "direction": "forward", "weight": 0.3 },
+    { "source": "flow:browse-collection-with-facets", "target": "step:browse-collection-with-facets:render-facet-form", "type": "flow_step", "direction": "forward", "weight": 0.6 },
+    { "source": "flow:browse-collection-with-facets", "target": "step:browse-collection-with-facets:update-results-html", "type": "flow_step", "direction": "forward", "weight": 0.9 },
+    { "source": "flow:perform-predictive-search", "target": "step:perform-predictive-search:read-search-term", "type": "flow_step", "direction": "forward", "weight": 0.3 },
+    { "source": "flow:perform-predictive-search", "target": "step:perform-predictive-search:fetch-predictive-results", "type": "flow_step", "direction": "forward", "weight": 0.6 },
+    { "source": "flow:perform-predictive-search", "target": "step:perform-predictive-search:render-accessible-results", "type": "flow_step", "direction": "forward", "weight": 0.9 },
+    { "source": "flow:manage-customer-account", "target": "step:manage-customer-account:render-customer-templates", "type": "flow_step", "direction": "forward", "weight": 0.3 },
+    { "source": "flow:manage-customer-account", "target": "step:manage-customer-account:handle-address-ui", "type": "flow_step", "direction": "forward", "weight": 0.6 },
+    { "source": "flow:manage-customer-account", "target": "step:manage-customer-account:submit-localization-form", "type": "flow_step", "direction": "forward", "weight": 0.9 },
+    { "source": "flow:mount-vue-nest-poc-section", "target": "step:mount-vue-nest-poc-section:serialize-liquid-context", "type": "flow_step", "direction": "forward", "weight": 0.2 },
+    { "source": "flow:mount-vue-nest-poc-section", "target": "step:mount-vue-nest-poc-section:mount-vue-app", "type": "flow_step", "direction": "forward", "weight": 0.4 },
+    { "source": "flow:mount-vue-nest-poc-section", "target": "step:mount-vue-nest-poc-section:fetch-nest-api", "type": "flow_step", "direction": "forward", "weight": 0.6 },
+    { "source": "flow:mount-vue-nest-poc-section", "target": "step:mount-vue-nest-poc-section:return-poc-data", "type": "flow_step", "direction": "forward", "weight": 0.8 },
+    { "source": "flow:mount-vue-nest-poc-section", "target": "step:mount-vue-nest-poc-section:render-combined-panel", "type": "flow_step", "direction": "forward", "weight": 1.0 },
+    { "source": "domain:storefront-merchandising", "target": "domain:product-detail-and-sizing", "type": "cross_domain", "direction": "forward", "description": "Merchandising sections and product cards route shoppers into product detail pages.", "weight": 0.6 },
+    { "source": "domain:product-detail-and-sizing", "target": "domain:cart-and-checkout-handoff", "type": "cross_domain", "direction": "forward", "description": "Product forms submit selected variants and quantities into the cart experience.", "weight": 0.8 },
+    { "source": "domain:storefront-discovery", "target": "domain:product-detail-and-sizing", "type": "cross_domain", "direction": "forward", "description": "Search and collection discovery results lead to product detail surfaces.", "weight": 0.7 },
+    { "source": "domain:customer-and-localization", "target": "domain:cart-and-checkout-handoff", "type": "cross_domain", "direction": "forward", "description": "Customer login, order, tax, duty, and localization labels influence cart and post-purchase presentation.", "weight": 0.5 },
+    { "source": "domain:vue-nest-poc-integration", "target": "domain:product-detail-and-sizing", "type": "cross_domain", "direction": "forward", "description": "The POC reads the same size chart custom data model used by product detail sizing.", "weight": 0.6 }
+  ],
+  "layers": [],
+  "tour": []
+}
