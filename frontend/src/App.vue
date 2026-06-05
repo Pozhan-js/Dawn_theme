@@ -195,15 +195,14 @@ onMounted(loadItems)
         {{ sizeChart?.heading }}
       </h3>
 
-      <div class="overflow-x-auto rounded-[0.5rem] border border-[rgba(var(--color-foreground,18,18,18),0.12)]">
-        <table class="w-full min-w-[58rem] border-collapse">
+      <div class="vue-nest-poc-size-chart__wrapper">
+        <table class="vue-nest-poc-size-chart__table">
           <thead>
             <tr>
               <th
                 v-for="column in sizeChart?.columns"
                 :key="column"
                 scope="col"
-                class="border-b border-[rgba(var(--color-foreground,18,18,18),0.1)] bg-[rgba(var(--color-foreground,18,18,18),0.05)] p-5 text-center font-semibold"
               >
                 {{ column }}
               </th>
@@ -211,24 +210,11 @@ onMounted(loadItems)
           </thead>
           <tbody>
             <tr v-for="row in sizeChartRows" :key="row.size">
-              <th
-                scope="row"
-                class="border-b border-[rgba(var(--color-foreground,18,18,18),0.1)] p-5 text-center last:border-b-0"
-              >
-                {{ row.size }}
-              </th>
-              <td class="border-b border-[rgba(var(--color-foreground,18,18,18),0.1)] p-5 text-center last:border-b-0">
-                {{ row.shoulder }}
-              </td>
-              <td class="border-b border-[rgba(var(--color-foreground,18,18,18),0.1)] p-5 text-center last:border-b-0">
-                {{ row.chest }}
-              </td>
-              <td class="border-b border-[rgba(var(--color-foreground,18,18,18),0.1)] p-5 text-center last:border-b-0">
-                {{ row.length }}
-              </td>
-              <td class="border-b border-[rgba(var(--color-foreground,18,18,18),0.1)] p-5 text-center last:border-b-0">
-                {{ row.sleeve }}
-              </td>
+              <th scope="row">{{ row.size }}</th>
+              <td>{{ row.shoulder }}</td>
+              <td>{{ row.chest }}</td>
+              <td>{{ row.length }}</td>
+              <td>{{ row.sleeve }}</td>
             </tr>
           </tbody>
         </table>
@@ -240,3 +226,34 @@ onMounted(loadItems)
     </section>
   </section>
 </template>
+
+<style scoped>
+.vue-nest-poc-size-chart__wrapper {
+  overflow-x: auto;
+  border: 0.1rem solid rgba(var(--color-foreground, 18, 18, 18), 0.12);
+  border-radius: 0.5rem;
+}
+
+.vue-nest-poc-size-chart__table {
+  width: 100%;
+  min-width: 58rem;
+  border-collapse: collapse;
+  text-align: center;
+}
+
+.vue-nest-poc-size-chart__table th,
+.vue-nest-poc-size-chart__table td {
+  padding: 1.4rem 1.6rem;
+  border-bottom: 0.1rem solid rgba(var(--color-foreground, 18, 18, 18), 0.12);
+}
+
+.vue-nest-poc-size-chart__table thead th {
+  background: rgba(var(--color-foreground, 18, 18, 18), 0.04);
+  font-weight: 600;
+}
+
+.vue-nest-poc-size-chart__table tbody tr:last-child th,
+.vue-nest-poc-size-chart__table tbody tr:last-child td {
+  border-bottom: 0;
+}
+</style>
