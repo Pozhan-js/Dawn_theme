@@ -1,18 +1,3 @@
-{%- style -%}
-  [data-vue-nest-poc] table th,
-  [data-vue-nest-poc] table td {
-    border-bottom: 0.1rem solid rgba(var(--color-foreground), 0.12) !important;
-    border-right: 0;
-    border-left: 0;
-    border-top: 0;
-  }
-
-  [data-vue-nest-poc] table tbody tr:last-child th,
-  [data-vue-nest-poc] table tbody tr:last-child td {
-    border-bottom: 0 !important;
-  }
-{%- endstyle -%}
-
 {% render 'vue-nest-poc-vite-tag' %}
 
 {%- liquid
@@ -28,6 +13,27 @@
     assign size_chart_metaobject = metaobjects[section.settings.metaobject_type][section.settings.metaobject_handle]
   endif
 -%}
+
+<style>
+  [data-vue-nest-poc] table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+  }
+  [data-vue-nest-poc] table th,
+  [data-vue-nest-poc] table td {
+    padding: 1.4rem 1.6rem;
+    border-bottom: 0.1rem solid rgba(var(--color-foreground), 0.12);
+  }
+  [data-vue-nest-poc] table thead th {
+    background: rgba(var(--color-foreground), 0.04);
+    font-weight: 600;
+  }
+  [data-vue-nest-poc] table tbody tr:last-child th,
+  [data-vue-nest-poc] table tbody tr:last-child td {
+    border-bottom: 0;
+  }
+</style>
 
 <div class="vue-nest-poc-section color-{{ section.settings.color_scheme }}">
   <div class="vue-nest-poc-section__inner">
