@@ -6,7 +6,12 @@
   assign entry = entry | default: vite-tag
   assign path = entry | replace: '@/', '../src/' | replace: '~/', '../'
 %}
-{% if path == "/entrypoints/vue-nest-poc.ts" or path == "vue-nest-poc.ts" %}
-  <script src="{{ 'vue-nest-poc-CHIRpEvD.js' | asset_url | split: '?' | first }}" type="module" crossorigin="anonymous"></script>
-  {{ 'vue-nest-poc-BphAwhAa.css' | asset_url | split: '?' | first | stylesheet_tag: preload: preload_stylesheet }}
+{% if path == "/entrypoints/icon-row-shadcn-probe.ts" or path == "icon-row-shadcn-probe.ts" %}
+  <script src="{{ 'icon-row-shadcn-probe-sZH8FdD8.js' | asset_url | split: '?' | first }}" type="module" crossorigin="anonymous"></script>
+  <link rel="modulepreload" href="{{ 'runtime-dom.esm-bundler-GYWOO9w5.js' | asset_url | split: '?' | first }}" crossorigin="anonymous">
+  {{ 'icon-row-shadcn-probe-BfzLPvTE.css' | asset_url | split: '?' | first | stylesheet_tag: preload: preload_stylesheet }}
+{% elsif path == "/entrypoints/vue-nest-poc.ts" or path == "vue-nest-poc.ts" %}
+  <script src="{{ 'vue-nest-poc-pzb1RsF7.js' | asset_url | split: '?' | first }}" type="module" crossorigin="anonymous"></script>
+  <link rel="modulepreload" href="{{ 'runtime-dom.esm-bundler-GYWOO9w5.js' | asset_url | split: '?' | first }}" crossorigin="anonymous">
+  {{ 'vue-nest-poc-BMXmdY0z.css' | asset_url | split: '?' | first | stylesheet_tag: preload: preload_stylesheet }}
 {% endif %}

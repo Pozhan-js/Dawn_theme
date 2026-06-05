@@ -7,6 +7,17 @@
     <h2 class="icon-row__title">{{ section.settings.heading | escape }}</h2>
   {% endif %}
 
+  {% if section.settings.probe_enabled %}
+    {% render 'icon-row-shadcn-probe',
+      section_id: section.id,
+      label: section.settings.probe_label,
+      placeholder: section.settings.probe_placeholder,
+      default_value: section.settings.probe_default_value,
+      disabled: section.settings.probe_disabled,
+      help_text: section.settings.probe_help_text
+    %}
+  {% endif %}
+
   {% if section.blocks.size == 0 %}
     <p class="icon-row__empty">在编辑器里点击「添加块」加入卖点。</p>
   {% else %}
@@ -71,6 +82,42 @@
         "step": 4,
         "unit": "px",
         "default": 36
+      },
+      {
+        "type": "checkbox",
+        "id": "probe_enabled",
+        "label": "启用 shadcn-vue 输入框验证",
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "probe_label",
+        "label": "验证输入框标签",
+        "default": "shadcn-vue 输入框"
+      },
+      {
+        "type": "text",
+        "id": "probe_placeholder",
+        "label": "验证输入框占位文本",
+        "default": "请输入测试内容"
+      },
+      {
+        "type": "text",
+        "id": "probe_default_value",
+        "label": "验证输入框默认值",
+        "default": "本地测试值"
+      },
+      {
+        "type": "checkbox",
+        "id": "probe_disabled",
+        "label": "禁用验证输入框",
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "probe_help_text",
+        "label": "验证输入框说明",
+        "default": "此输入框只用于验证 shadcn-vue 组件链路，输入值不会提交或保存。"
       }
     ],
     "blocks": [

@@ -1,0 +1,17 @@
+{% render 'vite-tag', entry: 'icon-row-shadcn-probe.ts' %}
+
+<div data-icon-row-shadcn-probe-shell>
+  <div data-icon-row-shadcn-probe>
+    <p>正在加载 shadcn-vue 输入框验证组件...</p>
+  </div>
+  <script type="application/json" data-icon-row-shadcn-probe-config>
+    {
+      "sectionId": {{ section_id | json }},
+      "label": {{ label | json }},
+      "placeholder": {{ placeholder | json }},
+      "defaultValue": {{ default_value | json }},
+      "disabled": {{ disabled | json }},
+      "helpText": {{ help_text | json }}
+    }
+  </script>
+</div>
