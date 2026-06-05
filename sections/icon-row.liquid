@@ -1,5 +1,8 @@
 {% comment %} sections/icon-row.liquid {% endcomment %}
-<section id="shopify-section-{{ section.id }}" class="icon-row page-width">
+<section
+  id="shopify-section-{{ section.id }}"
+  class="icon-row page-width"
+  style="padding-top: {{ section.settings.padding_top }}px;">
   {% if section.settings.heading != blank %}
     <h2 class="icon-row__title">{{ section.settings.heading | escape }}</h2>
   {% endif %}
