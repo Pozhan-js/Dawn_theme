@@ -76,24 +76,24 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        entryFileNames: 'js-components-[name]-[hash].js',
-        chunkFileNames: 'js-vendors-[name]-[hash].js',
+        entryFileNames: 'js/components/[name]-[hash].js',
+        chunkFileNames: 'js/vendors/[name]-[hash].js',
         assetFileNames: (assetInfo) => {
           const extension = assetInfo.name?.match(/\.[^.]+$/)?.[0]?.toLowerCase()
 
           if (extension === '.css') {
-            return 'css-components-[name]-[hash][extname]'
+            return 'css/components/[name]-[hash][extname]'
           }
 
           if (extension && imageExtensions.has(extension)) {
-            return 'images-[name]-[hash][extname]'
+            return 'images/[name]-[hash][extname]'
           }
 
           if (extension && fontExtensions.has(extension)) {
-            return 'fonts-[name]-[hash][extname]'
+            return 'fonts/[name]-[hash][extname]'
           }
 
-          return 'misc-[name]-[hash][extname]'
+          return 'misc/[name]-[hash][extname]'
         },
       },
     },
