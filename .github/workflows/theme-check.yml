@@ -1,0 +1,21 @@
+name: Theme Check
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  theme-check:
+    name: Theme Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Theme Check
+        uses: shopify/theme-check-action@v2
+        with:
+          theme_root: .
+          flags: --fail-level suggestion
+          token: ${{ github.token }}
+          base: main
