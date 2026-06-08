@@ -1,5 +1,5 @@
-frontend/
-backend/
-docs/
-node_modules/
-assets/.vite/
+frontend/*
+backend/*
+docs/*
+node_modules/*
+assets/.vite/*

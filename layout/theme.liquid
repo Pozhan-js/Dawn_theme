@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="theme-color" content="">
     <link rel="canonical" href="{{ canonical_url }}">
-    <script defer src="https://cdn.jsdelivr.net/npm/motion@latest/dist/motion.js"></script>
+    <script src="{{ 'motion.js' | asset_url }}" defer="defer"></script>
 
     {%- if settings.favicon != blank -%}
       <link
@@ -64,6 +64,7 @@
       {{ body_font_bold_italic | font_face: font_display: 'swap' }}
       {{ settings.type_header_font | font_face: font_display: 'swap' }}
 
+      {% assign scheme_classes = '' %}
       {% for scheme in settings.color_schemes -%}
         {% assign scheme_classes = scheme_classes | append: ', .color-' | append: scheme.id %}
         {% if forloop.index == 1 -%}
