@@ -60,12 +60,7 @@
           }
         }
       },
-      "block_order": [
-        "size_s",
-        "size_m",
-        "size_l",
-        "size_xl"
-      ],
+      "block_order": ["size_s", "size_m", "size_l", "size_xl"],
       "settings": {
         "heading": "尺码表",
         "heading_size": "h1",
@@ -129,12 +124,7 @@
           }
         }
       },
-      "block_order": [
-        "vue_size_s",
-        "vue_size_m",
-        "vue_size_l",
-        "vue_size_xl"
-      ],
+      "block_order": ["vue_size_s", "vue_size_m", "vue_size_l", "vue_size_xl"],
       "settings": {
         "heading": "Vue 已挂载到 Liquid 区块",
         "api_url": "http://localhost:4000/api/vue-nest-poc",
@@ -151,11 +141,14 @@
         "sleeve_label": "袖长 (cm)",
         "size_note": "这张表的数据来自当前 Shopify 页面模板里的 vue-nest-poc section blocks。"
       }
+    },
+    "home_test": {
+      "type": "home-test",
+      "settings": {
+        "title": "Home Test",
+        "description": "This is a test section"
+      }
     }
   },
-  "order": [
-    "main",
-    "my_test_page_1",
-    "vue_nest_poc"
-  ]
+  "order": ["main", "my_test_page_1", "vue_nest_poc", "home_test"]
 }

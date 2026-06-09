@@ -3,7 +3,7 @@
   "themeCheck.checkOnSave": true,
   "themeCheck.preloadOnBoot": true,
   "[liquid]": {
-    "editor.defaultFormatter": "sissel.shopify-liquid",
+    "editor.defaultFormatter": "Shopify.theme-check-vscode",
     "editor.formatOnSave": true
   }
 }

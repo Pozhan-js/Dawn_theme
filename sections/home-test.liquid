@@ -1,0 +1,234 @@
+{%- style -%}
+  .home-test-{{ section.id }} {
+    margin: 2rem auto;
+    padding: 1.5rem;
+    max-width: 72rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 1.3rem;
+    line-height: 1.6;
+    color: #1a1a1a;
+    background: #f7f7f7;
+    border: 1px solid #e3e3e3;
+    border-radius: 0.8rem;
+  }
+
+  .home-test-{{ section.id }} h2 {
+    margin: 2rem 0 0.8rem;
+    font-size: 1.5rem;
+    font-family: inherit;
+    border-bottom: 1px solid #d4d4d4;
+    padding-bottom: 0.4rem;
+  }
+
+  .home-test-{{ section.id }} h2:first-child {
+    margin-top: 0;
+  }
+
+  .home-test-{{ section.id }} dl {
+    margin: 0;
+  }
+
+  .home-test-{{ section.id }} dt {
+    margin: 0.8rem 0 0.2rem;
+    padding-top: 0.6rem;
+    border-top: 1px solid #e8e8e8;
+    color: #666;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  .home-test-{{ section.id }} dl > dt:first-child {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: 0;
+  }
+
+  .home-test-{{ section.id }} dd {
+    margin: 0;
+    padding-left: 1.2rem;
+    overflow-wrap: anywhere;
+    word-break: break-all;
+  }
+
+  .home-test-{{ section.id }} .home-test__note {
+    margin: 0.8rem 0 0;
+    padding: 0.8rem 1rem;
+    background: #fff8e6;
+    border: 1px solid #f0d98c;
+    border-radius: 0.4rem;
+    color: #6a5a1b;
+  }
+
+  .home-test-{{ section.id }} .home-test__empty {
+    color: #999;
+    font-style: italic;
+  }
+{%- endstyle -%}
+
+<div class="page-width home-test-{{ section.id }}">
+  {% if section.settings.title != blank %}
+    <p>
+      <strong>{{ section.settings.title | escape }}</strong>
+    </p>
+  {% endif %}
+  {% if section.settings.description != blank %}
+    <p>{{ section.settings.description | escape }}</p>
+  {% endif %}
+
+  <h2>1. request — 当前访问上下文（任何页面都有）</h2>
+  <dl>
+    <dt>request.path</dt>
+    <dd>{{ request.path | json }}</dd>
+    <dt>request.page_type</dt>
+    <dd>{{ request.page_type | json }}</dd>
+    <dt>request.host</dt>
+    <dd>{{ request.host | json }}</dd>
+    <dt>request.origin</dt>
+    <dd>{{ request.origin | json }}</dd>
+    <dt>request.locale.iso_code</dt>
+    <dd>{{ request.locale.iso_code | json }}</dd>
+    <dt>request.locale.name</dt>
+    <dd>{{ request.locale.name | json }}</dd>
+    <dt>request.locale.root_url</dt>
+    <dd>{{ request.locale.root_url | json }}</dd>
+    <dt>request.design_mode</dt>
+    <dd>{{ request.design_mode | json }}</dd>
+    <dt>canonical_url</dt>
+    <dd>{{ canonical_url | json }}</dd>
+    <dt>request.design_mode</dt>
+    <dd>{{ request.design_mode | json }}</dd>
+  </dl>
+
+  <h2>2. shop — 店铺信息</h2>
+  <dl>
+    <dt>shop.name</dt>
+    <dd>{{ shop.name | json }}</dd>
+    <dt>shop.domain</dt>
+    <dd>{{ shop.domain | json }}</dd>
+    <dt>shop.url</dt>
+    <dd>{{ shop.url | json }}</dd>
+  </dl>
+
+  <h2>3. localization — 国家 / 语言 / 货币</h2>
+  <dl>
+    <dt>localization.language.iso_code</dt>
+    <dd>{{ localization.language.iso_code | json }}</dd>
+    <dt>localization.country.iso_code</dt>
+    <dd>{{ localization.country.iso_code | json }}</dd>
+    <dt>localization.country.currency.iso_code</dt>
+    <dd>{{ localization.country.currency.iso_code | json }}</dd>
+    <dt>localization.country.currency.symbol</dt>
+    <dd>{{ localization.country.currency.symbol | json }}</dd>
+  </dl>
+
+  <h2>4. routes — 固定路由路径</h2>
+  <dl>
+    <dt>routes.root_url</dt>
+    <dd>{{ routes.root_url | json }}</dd>
+    <dt>routes.cart_url</dt>
+    <dd>{{ routes.cart_url | json }}</dd>
+    <dt>routes.search_url</dt>
+    <dd>{{ routes.search_url | json }}</dd>
+    <dt>routes.account_url</dt>
+    <dd>{{ routes.account_url | json }}</dd>
+    <dt>routes.account_login_url</dt>
+    <dd>{{ routes.account_login_url | json }}</dd>
+  </dl>
+
+  <h2>5. page — 仅 Page 模板（/pages/xxx）有数据</h2>
+  {% if request.page_type == 'page' %}
+    <dl>
+      <dt>page.title</dt>
+      <dd>{{ page.title | json }}</dd>
+      <dt>page.handle</dt>
+      <dd>{{ page.handle | json }}</dd>
+      <dt>page.url</dt>
+      <dd>{{ page.url | json }}</dd>
+      <dt>page.template_suffix</dt>
+      <dd>{{ page.template_suffix | json }}</dd>
+      <dt>page.content</dt>
+      <dd>{{ page.content | strip_html | truncate: 120 | json }}</dd>
+    </dl>
+  {% else %}
+    <p class="home-test__note">
+      当前 <code>request.page_type</code> 是 <strong>{{ request.page_type }}</strong>，不是 <code>page</code>，所以
+      <code>page.*</code> 为空是正常的。 当前路径请查看上方的 <code>request.path</code>（值为
+      {{ request.path | json }}）。
+    </p>
+    <dl>
+      <dt>page.url</dt>
+      <dd class="home-test__empty">{{ page.url | json }}</dd>
+      <dt>page.title</dt>
+      <dd class="home-test__empty">{{ page.title | json }}</dd>
+    </dl>
+  {% endif %}
+
+  <h2>6. 当前模板可用的主对象</h2>
+  {% case request.page_type %}
+    {% when 'index' %}
+      <p class="home-test__note">
+        首页没有 <code>page</code> / <code>product</code> / <code>collection</code> 主对象。
+      </p>
+    {% when 'page' %}
+      <p class="home-test__note">当前主对象：<code>page</code></p>
+    {% when 'product' %}
+      <dl>
+        <dt>product.title</dt>
+        <dd>{{ product.title | json }}</dd>
+        <dt>product.url</dt>
+        <dd>{{ product.url | json }}</dd>
+      </dl>
+    {% when 'collection' %}
+      <dl>
+        <dt>collection.title</dt>
+        <dd>{{ collection.title | json }}</dd>
+        <dt>collection.url</dt>
+        <dd>{{ collection.url | json }}</dd>
+      </dl>
+    {% when 'blog' %}
+      <dl>
+        <dt>blog.title</dt>
+        <dd>{{ blog.title | json }}</dd>
+        <dt>blog.url</dt>
+        <dd>{{ blog.url | json }}</dd>
+      </dl>
+    {% when 'article' %}
+      <dl>
+        <dt>article.title</dt>
+        <dd>{{ article.title | json }}</dd>
+        <dt>article.url</dt>
+        <dd>{{ article.url | json }}</dd>
+      </dl>
+    {% else %}
+      <p class="home-test__note">
+        当前页面类型：<code>{{ request.page_type }}</code>
+      </p>
+  {% endcase %}
+</div>
+
+{% schema %}
+{
+  "name": "Home Test",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "标题",
+      "default": "Liquid 对象调试"
+    },
+    {
+      "type": "text",
+      "id": "description",
+      "label": "说明",
+      "default": "对比 request、shop、localization、routes、page 等对象"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Home Test"
+    }
+  ]
+}
+{% endschema %}
