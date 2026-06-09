@@ -22,11 +22,11 @@
         "button": {
           "type": "buttons",
           "settings": {
-            "button_label_1": "Shop all",
-            "button_link_1": "shopify://collections/all",
+            "button_label_1": "Shop everyday essentials",
+            "button_link_1": "shopify://collections/everyday-essentials",
             "button_style_secondary_1": true,
-            "button_label_2": "",
-            "button_link_2": "",
+            "button_label_2": "Explore fragrances",
+            "button_link_2": "shopify://collections/fragrance-edit",
             "button_style_secondary_2": false
           }
         }
@@ -48,9 +48,9 @@
     "featured_collection": {
       "type": "featured-collection",
       "settings": {
-        "collection": "all",
+        "collection": "everyday-essentials",
         "products_to_show": 8,
-        "title": "Featured products",
+        "title": "Everyday Essentials",
         "heading_size": "h2",
         "description": "",
         "show_description": false,
