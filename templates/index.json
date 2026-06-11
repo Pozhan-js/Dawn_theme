@@ -31,7 +31,11 @@
           }
         }
       },
-      "block_order": ["heading", "button"],
+      "block_order": [
+        "heading",
+        "button"
+      ],
+      "custom_css": [],
       "settings": {
         "image_overlay_opacity": 40,
         "image_height": "large",
@@ -112,8 +116,6 @@
         "subTitle": "优惠商品将",
         "accordion_mode": true,
         "open_first_item": false,
-        "blog": "news",
-        "blog_handle": "news",
         "post_limit": 6
       }
     },
